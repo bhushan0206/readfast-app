@@ -47,7 +47,11 @@ export default {
           border: '#2E2E2E',
           text: '#E0E0E0',
           'text-secondary': '#A0A0A0',
-        }
+        },
+        success: {
+          100: '#dcfce7',
+          800: '#166534',
+        },
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
