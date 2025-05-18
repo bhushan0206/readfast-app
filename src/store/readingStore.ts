@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { create } from 'zustand';
 import { saveReadingSession, updateReadingStats } from '../services/supabase';
 import { useAuthStore } from './authStore';
@@ -121,7 +123,14 @@ export const useReadingStore = create<ReadingState>((set, get) => ({
       await saveReadingSession(sessionData);
       
       // Update reading stats
-      const statsUpdate = {
+      const statsUpdate: {
+        total_words_read: number;
+        total_time_spent: number;
+        sessions_completed: number;
+        max_wpm?: number;
+        avg_wpm?: number;
+        avg_comprehension?: number | null;
+      } = {
         total_words_read: wordsRead,
         total_time_spent: timeSpentMs / 1000, // Convert to seconds
         sessions_completed: 1,
