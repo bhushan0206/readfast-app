@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Save, User } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useAuthStore } from '../../../store/authStore';
 import { useReadingStore } from '../../../store/readingStore';
+import { useThemeStore } from '../../../store/themeStore';
 import Button from '../../../shared/components/Button';
 import Input from '../../../shared/components/Input';
 import SpeedControl from '../../reading/components/SpeedControl';
@@ -10,10 +12,10 @@ import SpeedControl from '../../reading/components/SpeedControl';
 const Settings: React.FC = () => {
   const navigate = useNavigate();
   const { profile, updateProfile } = useAuthStore();
+  const { theme, setTheme } = useThemeStore();
   
   const [fullName, setFullName] = useState(profile?.full_name || '');
   const [readingLevel, setReadingLevel] = useState(profile?.reading_level || 'beginner');
-  const [theme, setTheme] = useState(profile?.theme || 'light');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -26,15 +28,11 @@ const Settings: React.FC = () => {
       await updateProfile({
         full_name: fullName,
         reading_level: readingLevel,
-        theme,
+        theme_preference: theme,
       });
       
       setSuccess(true);
-      
-      // Reset success message after 3 seconds
-      setTimeout(() => {
-        setSuccess(false);
-      }, 3000);
+      setTimeout(() => setSuccess(false), 3000);
     } catch (error) {
       console.error('Error updating profile:', error);
     } finally {
@@ -120,28 +118,27 @@ const Settings: React.FC = () => {
             </div>
             
             <div className="space-y-1">
-              <label className="block text-sm font-medium text-neutral-700">
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
                 Theme Preference
               </label>
               <div className="grid grid-cols-2 gap-3">
                 {['light', 'dark'].map((themeOption) => (
-                  <div
+                  <motion.div
                     key={themeOption}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     className={`
                       p-3 rounded-lg border cursor-pointer transition-colors text-center
                       ${theme === themeOption 
-                        ? 'bg-primary-50 border-primary-300 text-primary-800' 
-                        : 'bg-white border-neutral-200 hover:border-neutral-300 text-neutral-700'}
+                        ? 'bg-primary-50 dark:bg-primary-900/50 border-primary-300 dark:border-primary-700 text-primary-800 dark:text-primary-100' 
+                        : 'bg-white dark:bg-neutral-800 border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600 text-neutral-700 dark:text-neutral-300'}
                     `}
-                    onClick={() => setTheme(themeOption)}
+                    onClick={() => setTheme(themeOption as 'light' | 'dark')}
                   >
                     <span className="capitalize">{themeOption}</span>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
-              <p className="text-xs text-neutral-500 mt-1">
-                Dark mode coming soon
-              </p>
             </div>
             
             <div className="pt-4">
