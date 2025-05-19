@@ -19,7 +19,6 @@
     "react-router-dom": "^6.22.0",
     "sonner": "^1.4.0",
     "zustand": "^4.4.7",
-    "@web-push-libs/webpush": "^4.1.1",
     "web-push": "^3.6.7",
     "react-share": "^5.1.0",
     "react-google-adsense": "^1.1.0"
