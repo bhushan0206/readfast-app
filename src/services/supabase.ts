@@ -1,11 +1,23 @@
 import { createClient } from '@supabase/supabase-js';
+import type { Provider } from '@supabase/supabase-js';
 import type { Database } from '../types/supabase';
 
-// These values would typically be in environment variables
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://your-supabase-url.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'your-anon-key';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
+
+export const signInWithProvider = async (provider: Provider) => {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider,
+    options: {
+      redirectTo: `${window.location.origin}/auth/callback`
+    }
+  });
+  
+  if (error) throw error;
+  return data;
+};
 
 export const getUser = async () => {
   const { data: { user } } = await supabase.auth.getUser();

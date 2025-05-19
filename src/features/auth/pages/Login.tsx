@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock } from 'lucide-react';
+import { Mail, Lock, Github, Google } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useAuthStore } from '../../../store/authStore';
 import Button from '../../../shared/components/Button';
 import Input from '../../../shared/components/Input';
@@ -10,7 +11,7 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   
-  const { login, loading } = useAuthStore();
+  const { login, loginWithProvider, loading } = useAuthStore();
   const navigate = useNavigate();
 
   const validate = () => {
@@ -36,7 +37,6 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!validate()) return;
     
     try {
@@ -48,8 +48,14 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div>
-      <h2 className="text-2xl font-bold text-center text-neutral-900 mb-6">Sign in to your account</h2>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <h2 className="text-2xl font-bold text-center text-neutral-900 dark:text-white mb-6">
+        Sign in to your account
+      </h2>
       
       <form onSubmit={handleSubmit} className="space-y-6">
         <Input
@@ -91,15 +97,47 @@ const Login: React.FC = () => {
         </div>
       </form>
 
+      <div className="mt-6">
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-neutral-300 dark:border-neutral-700"></div>
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-white dark:bg-neutral-900 text-neutral-500">
+              Or continue with
+            </span>
+          </div>
+        </div>
+
+        <div className="mt-6 grid grid-cols-2 gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => loginWithProvider('google')}
+            leftIcon={<Google size={18} />}
+          >
+            Google
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => loginWithProvider('github')}
+            leftIcon={<Github size={18} />}
+          >
+            GitHub
+          </Button>
+        </div>
+      </div>
+
       <div className="mt-6 text-center">
-        <p className="text-sm text-neutral-600">
+        <p className="text-sm text-neutral-600 dark:text-neutral-400">
           Don't have an account?{' '}
           <Link to="/register" className="font-medium text-primary-600 hover:text-primary-500">
             Create one now
           </Link>
         </p>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

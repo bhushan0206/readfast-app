@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { supabase, getUserProfile } from '../services/supabase';
+import { supabase, signInWithProvider } from '../services/supabase';
+import type { Provider } from '@supabase/supabase-js';
 import { toast } from 'sonner';
 
 interface AuthState {
@@ -8,6 +9,7 @@ interface AuthState {
   initialized: boolean;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  loginWithProvider: (provider: Provider) => Promise<void>;
   register: (email: string, password: string, fullName: string) => Promise<void>;
   logout: () => Promise<void>;
   updateProfile: (updates: any) => Promise<void>;
@@ -25,7 +27,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const { data: { user } } = await supabase.auth.getUser();
       
       if (user) {
-        const profile = await getUserProfile(user.id);
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+        
         set({ user, profile, initialized: true });
       } else {
         set({ initialized: true });
@@ -47,7 +54,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       
       if (error) throw error;
       
-      const profile = await getUserProfile(data.user.id);
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', data.user.id)
+        .single();
       
       set({
         user: data.user,
@@ -59,6 +70,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     } catch (error: any) {
       set({ loading: false });
       toast.error(error.message || 'Failed to login');
+      throw error;
+    }
+  },
+
+  loginWithProvider: async (provider: Provider) => {
+    try {
+      set({ loading: true });
+      await signInWithProvider(provider);
+    } catch (error: any) {
+      set({ loading: false });
+      toast.error(error.message || `Failed to login with ${provider}`);
       throw error;
     }
   },
@@ -79,37 +101,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       
       if (error) throw error;
       
-      // Create profile in profiles table
-      const { error: profileError } = await supabase
+      const { data: profile } = await supabase
         .from('profiles')
-        .insert({
-          id: data.user!.id,
-          email,
-          full_name: fullName,
-          reading_speed: 200, // Default reading speed (WPM)
-          font_size: 18,
-          theme: 'light',
-          reading_level: 'beginner',
-        });
-      
-      if (profileError) throw profileError;
-      
-      // Initialize reading stats
-      const { error: statsError } = await supabase
-        .from('reading_stats')
-        .insert({
-          user_id: data.user!.id,
-          avg_wpm: 0,
-          max_wpm: 0,
-          total_words_read: 0,
-          total_time_spent: 0,
-          avg_comprehension: null,
-          sessions_completed: 0,
-        });
-      
-      if (statsError) throw statsError;
-      
-      const profile = await getUserProfile(data.user!.id);
+        .select('*')
+        .eq('id', data.user!.id)
+        .single();
       
       set({
         user: data.user,
@@ -160,9 +156,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       
       if (error) throw error;
       
-      const updatedProfile = await getUserProfile(user.id);
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
       
-      set({ profile: updatedProfile });
+      set({ profile });
       
       toast.success('Profile updated successfully');
     } catch (error: any) {
