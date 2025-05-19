@@ -1,6 +1,8 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './store/authStore';
+import { useThemeStore } from './store/themeStore';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // Layouts
 import MainLayout from './shared/layouts/MainLayout';
@@ -22,6 +24,11 @@ import ProtectedRoute from './shared/components/ProtectedRoute';
 
 function App() {
   const { initialized } = useAuthStore();
+  const { theme } = useThemeStore();
+
+  React.useEffect(() => {
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+  }, [theme]);
 
   if (!initialized) {
     return (
@@ -34,27 +41,39 @@ function App() {
   }
 
   return (
-    <Routes>
-      {/* Auth Routes */}
-      <Route element={<AuthLayout />}>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-      </Route>
-      
-      {/* Protected Routes */}
-      <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/read/:id" element={<ReadingSession />} />
-        <Route path="/library" element={<Library />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/achievements" element={<Achievements />} />
-      </Route>
-      
-      {/* Fallback routes */}
-      <Route path="/404" element={<NotFound />} />
-      <Route path="*" element={<Navigate to="/404" replace />} />
-    </Routes>
+    <>
+      <div className="animated-bg" />
+      <AnimatePresence mode="wait">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <Routes>
+            {/* Auth Routes */}
+            <Route element={<AuthLayout />}>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+            </Route>
+            
+            {/* Protected Routes */}
+            <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/read/:id" element={<ReadingSession />} />
+              <Route path="/library" element={<Library />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/achievements" element={<Achievements />} />
+            </Route>
+            
+            {/* Fallback routes */}
+            <Route path="/404" element={<NotFound />} />
+            <Route path="*" element={<Navigate to="/404" replace />} />
+          </Routes>
+        </motion.div>
+      </AnimatePresence>
+    </>
   );
 }
 
