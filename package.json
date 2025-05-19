@@ -21,7 +21,7 @@
     "zustand": "^4.4.7",
     "web-push": "^3.6.7",
     "react-share": "^5.1.0",
-    "react-google-adsense": "^1.1.0"
+    "react-google-adsense": "^0.0.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
