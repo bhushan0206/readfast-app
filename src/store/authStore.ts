@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { create } from 'zustand';
 import { supabase, signInWithProvider } from '../services/supabase';
 import type { Provider } from '@supabase/supabase-js';
@@ -88,7 +89,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   register: async (email, password, fullName) => {
     try {
       set({ loading: true });
-      
+
+      // Validate input before making the request
+      if (!email || !password) {
+        set({ loading: false });
+        toast.error('Email and password are required');
+        throw new Error('Email and password are required');
+      }
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -98,24 +106,40 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           },
         },
       });
-      
-      if (error) throw error;
-      
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', data.user!.id)
-        .single();
-      
+
+      if (error) {
+        // Log the full error object for debugging
+        console.error("Supabase signup error:", error);
+        set({ loading: false });
+        toast.error(error.message || 'Failed to register');
+        throw error;
+      }
+
+      // Only fetch profile if user was created
+      let profile = null;
+      if (data.user) {
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', data.user.id)
+          .single();
+        if (profileError) {
+          console.error("Profile fetch error after signup:", profileError);
+        }
+        profile = profileData;
+      }
+
       set({
         user: data.user,
         profile,
         loading: false,
       });
-      
+
       toast.success('Registration successful');
     } catch (error: any) {
       set({ loading: false });
+      // Log the error for debugging
+      console.error("Registration failed:", error);
       toast.error(error.message || 'Failed to register');
       throw error;
     }
