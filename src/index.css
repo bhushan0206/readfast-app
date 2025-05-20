@@ -13,7 +13,7 @@
   --primary-700: #1d4ed8;
   --primary-800: #1e40af;
   --primary-900: #1e3a8a;
-  --primary-900-rgb: 30, 58, 138; /* Add this line for RGB support */
+  --primary-900-rgb: 30, 58, 138;
   
   --secondary-50: #f0f9ff;
   --secondary-100: #e0f2fe;
@@ -47,7 +47,7 @@
   --success-700: #047857;
   --success-800: #065f46;
   --success-900: #064e3b;
-  --success-900-rgb: 6, 95, 70; /* Add this line for RGB support */
+  --success-900-rgb: 6, 95, 70;
   
   --warning-50: #fffbeb;
   --warning-100: #fef3c7;
@@ -83,12 +83,15 @@
   --neutral-900: #111827;
 }
 
+/* Dark mode colors */
 .dark {
   --bg-primary: #121212;
   --bg-secondary: #1E1E1E;
   --text-primary: #E0E0E0;
   --text-secondary: #A0A0A0;
   --border-color: #2E2E2E;
+  
+  color-scheme: dark;
 }
 
 body {
@@ -97,29 +100,55 @@ body {
   line-height: 1.5;
 }
 
-@layer utilities {
-  .bg-success-100 {
-    background-color: #d1f7c4;
-  }
-  .dark\:bg-primary-900-50 {
-    background-color: rgba(var(--primary-900-rgb), 0.5);
-  }
-  .dark\:bg-success-900-50 {
-    background-color: rgba(var(--success-900-rgb), 0.5);
-  }
+/* Animations */
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient {
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+
+.animated-bg {
+  @apply fixed inset-0 -z-10 opacity-20 dark:opacity-10;
+  background: linear-gradient(125deg, #60a5fa 0%, #3b82f6 25%, #2563eb 50%, #1d4ed8 75%, #1e40af 100%);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+
+/* Components */
+.card {
+  @apply bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6 transition-all duration-200;
+}
+
+.card:hover {
+  @apply shadow-md;
+}
+
+.badge {
+  @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium;
+}
+
+.badge-primary {
+  @apply bg-primary-100 text-primary-800 dark:bg-primary-900/50 dark:text-primary-100;
 }
 
 .badge-success {
-  @apply bg-success-100 text-success-800;
-}
-.dark .badge-success {
-  background-color: rgba(var(--success-900-rgb), 0.5);
+  @apply bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-100;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  line-height: 1.2;
+.progress-bar {
+  @apply bg-primary-100 dark:bg-primary-900/30 rounded-full overflow-hidden h-2;
 }
 
+.progress-bar-fill {
+  @apply bg-primary-500 rounded-full transition-all duration-200 h-full;
+}
+
+/* Reading specific styles */
 .reading-container {
   max-width: 650px;
   margin: 0 auto;
@@ -130,76 +159,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .word-focus {
-  @apply bg-primary-100 px-1 rounded font-medium;
+  @apply bg-primary-100 dark:bg-primary-900/50 px-1 rounded font-medium;
 }
 
-.progress-bar {
-  @apply bg-primary-100 rounded-full overflow-hidden h-2;
-}
-.dark .progress-bar {
-  background-color: rgba(var(--primary-900-rgb), 0.5);
-}
-
-.progress-bar-fill {
-  @apply bg-primary-500 rounded-full transition-all duration-200 h-full;
-}
-
-.card {
-  @apply bg-white dark:bg-[#1E1E1E] rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800 p-6 transition-all duration-200;
-}
-
-.card:hover {
-  @apply shadow-md;
-}
-
-.btn-primary {
-  @apply bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-lg font-medium transition-colors;
-}
-
-.btn-secondary {
-  @apply bg-secondary-500 hover:bg-secondary-600 text-white px-4 py-2 rounded-lg font-medium transition-colors;
-}
-
-.btn-outline {
-  @apply border border-neutral-300 hover:border-neutral-400 bg-white text-neutral-700 px-4 py-2 rounded-lg font-medium transition-colors;
-}
-
-.input {
-  @apply border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 rounded-lg px-3 py-2 w-full outline-none transition-all;
-}
-
-.badge {
-  @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium;
-}
-
-.badge-primary {
-  @apply bg-primary-100 text-primary-800 dark:text-primary-100;
-}
-.dark .badge-primary {
-  background-color: rgba(var(--primary-900-rgb), 0.5);
-}
-
-.badge-success {
-  @apply bg-success-100 text-success-800;
-}
-.dark .badge-success {
-  background-color: rgba(var(--success-900-rgb), 0.5);
-}
-
-.animated-bg {
-  @apply fixed inset-0 -z-10 opacity-20 dark:opacity-10;
-  background: linear-gradient(125deg, #60a5fa 0%, #3b82f6 25%, #2563eb 50%, #1d4ed8 75%, #1e40af 100%);
-  background-size: 400% 400%;
-  animation: gradient 15s ease infinite;
-}
-
+/* Animations */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .achievement-unlocked {
@@ -218,10 +184,4 @@ h1, h2, h3, h4, h5, h6 {
   100% {
     transform: scale(1);
   }
-}
-
-@keyframes gradient {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
 }

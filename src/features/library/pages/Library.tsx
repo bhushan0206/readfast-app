@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { BookOpen, Upload, Search, Plus } from 'lucide-react';
+import { BookOpen, Upload, Search, Plus, Wand2 } from 'lucide-react';
 import { useAuthStore } from '../../../store/authStore';
 import { getTexts, saveCustomText } from '../../../services/supabase';
 import Button from '../../../shared/components/Button';
 import Input from '../../../shared/components/Input';
 import TextCard from '../components/TextCard';
 import AddCustomTextModal from '../components/AddCustomTextModal';
+import GenerateTextModal from '../components/GenerateTextModal';
 
 interface Text {
   id: string;
@@ -23,6 +24,7 @@ const Library: React.FC = () => {
   const [filteredTexts, setFilteredTexts] = useState<Text[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showGenerateModal, setShowGenerateModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -51,14 +53,12 @@ const Library: React.FC = () => {
   const filterTexts = () => {
     let filtered = [...texts];
     
-    // Filter by search term
     if (searchTerm) {
       filtered = filtered.filter(text => 
         text.title.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
     
-    // Filter by category
     if (selectedCategory) {
       filtered = filtered.filter(text => text.category === selectedCategory);
     }
@@ -82,6 +82,22 @@ const Library: React.FC = () => {
     }
   };
 
+  const handleGenerateText = async (title: string, content: string) => {
+    if (!user) {
+      setError('You must be logged in to generate texts');
+      return;
+    }
+    
+    try {
+      await saveCustomText(user.id, title, content);
+      setShowGenerateModal(false);
+      fetchTexts();
+    } catch (err) {
+      console.error('Error saving generated text:', err);
+      setError('Failed to save generated text. Please try again.');
+    }
+  };
+
   const getCategories = () => {
     const categories = new Set<string>();
     texts.forEach(text => {
@@ -102,12 +118,25 @@ const Library: React.FC = () => {
 
   return (
     <div>
+      {/* Dynamic Background */}
+      <div className="fixed inset-0 -z-10">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-100/30 to-secondary-100/30 dark:from-primary-900/30 dark:to-secondary-900/30 animate-gradient" />
+        <div className="absolute inset-0 bg-[url('https://images.pexels.com/photos/5834/nature-grass-leaf-green.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')] bg-cover bg-center opacity-5 dark:opacity-10" />
+      </div>
+
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-neutral-900">Reading Library</h1>
-          <p className="text-neutral-600 mt-1">Choose a text to practice with</p>
+          <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">Reading Library</h1>
+          <p className="text-neutral-600 dark:text-neutral-400 mt-1">Choose a text to practice with</p>
         </div>
-        <div className="mt-4 md:mt-0">
+        <div className="mt-4 md:mt-0 space-x-2">
+          <Button 
+            leftIcon={<Wand2 size={18} />}
+            onClick={() => setShowGenerateModal(true)}
+            variant="secondary"
+          >
+            AI Generate
+          </Button>
           <Button 
             leftIcon={<Plus size={18} />}
             onClick={() => setShowAddModal(true)}
@@ -118,7 +147,7 @@ const Library: React.FC = () => {
       </div>
       
       {error && (
-        <div className="bg-error-50 border border-error-200 text-error-800 px-4 py-3 rounded-lg mb-6">
+        <div className="bg-error-50 dark:bg-error-900/50 border border-error-200 dark:border-error-800 text-error-800 dark:text-error-200 px-4 py-3 rounded-lg mb-6">
           {error}
         </div>
       )}
@@ -133,7 +162,7 @@ const Library: React.FC = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <Button
             variant={selectedCategory === null ? "primary" : "outline"}
             onClick={() => setSelectedCategory(null)}
@@ -160,12 +189,12 @@ const Library: React.FC = () => {
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 bg-white rounded-lg border border-neutral-200">
+        <div className="text-center py-12 bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700">
           {texts.length === 0 ? (
             <>
-              <BookOpen size={48} className="mx-auto text-neutral-400 mb-4" />
-              <h3 className="text-lg font-medium text-neutral-800">No texts available</h3>
-              <p className="text-neutral-600 mt-2 mb-6">Add your first text to get started</p>
+              <BookOpen size={48} className="mx-auto text-neutral-400 dark:text-neutral-600 mb-4" />
+              <h3 className="text-lg font-medium text-neutral-800 dark:text-neutral-200">No texts available</h3>
+              <p className="text-neutral-600 dark:text-neutral-400 mt-2 mb-6">Add your first text to get started</p>
               <Button 
                 leftIcon={<Plus size={18} />}
                 onClick={() => setShowAddModal(true)}
@@ -175,19 +204,26 @@ const Library: React.FC = () => {
             </>
           ) : (
             <>
-              <Search size={48} className="mx-auto text-neutral-400 mb-4" />
-              <h3 className="text-lg font-medium text-neutral-800">No matching texts found</h3>
-              <p className="text-neutral-600 mt-2">Try adjusting your search or filters</p>
+              <Search size={48} className="mx-auto text-neutral-400 dark:text-neutral-600 mb-4" />
+              <h3 className="text-lg font-medium text-neutral-800 dark:text-neutral-200">No matching texts found</h3>
+              <p className="text-neutral-600 dark:text-neutral-400 mt-2">Try adjusting your search or filters</p>
             </>
           )}
         </div>
       )}
       
-      {/* Custom Text Modal */}
+      {/* Modals */}
       {showAddModal && (
         <AddCustomTextModal
           onClose={() => setShowAddModal(false)}
           onSubmit={handleAddCustomText}
+        />
+      )}
+      
+      {showGenerateModal && (
+        <GenerateTextModal
+          onClose={() => setShowGenerateModal(false)}
+          onGenerate={handleGenerateText}
         />
       )}
     </div>

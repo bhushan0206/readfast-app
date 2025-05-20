@@ -42,7 +42,12 @@ function App() {
 
   return (
     <>
-      <div className="animated-bg" />
+      {/* Dynamic Background */}
+      <div className="fixed inset-0 -z-10">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-100/30 to-secondary-100/30 dark:from-primary-900/30 dark:to-secondary-900/30 animate-gradient" />
+        <div className="absolute inset-0 bg-[url('https://images.pexels.com/photos/5076531/pexels-photo-5076531.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')] bg-cover bg-center opacity-5 dark:opacity-10" />
+      </div>
+
       <AnimatePresence mode="wait">
         <motion.div
           initial={{ opacity: 0 }}
