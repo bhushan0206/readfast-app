@@ -59,6 +59,7 @@ export default {
           700: 'var(--success-700)',
           800: 'var(--success-800)',
           900: 'var(--success-900)',
+          '900-rgb': 'var(--success-900-rgb)',
         },
       },
       fontFamily: {
