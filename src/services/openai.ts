@@ -4,6 +4,10 @@ const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
 
 export async function generateText(prompt: string) {
   try {
+    if (!import.meta.env.VITE_OPENAI_API_KEY) {
+      throw new Error('OpenAI API key not configured');
+    }
+
     const response = await fetch(OPENAI_API_URL, {
       method: 'POST',
       headers: {
@@ -22,25 +26,35 @@ export async function generateText(prompt: string) {
             content: prompt
           }
         ],
+        temperature: 0.7,
         max_tokens: 1000
       })
     });
 
     if (!response.ok) {
-      throw new Error('Failed to generate text');
+      const error = await response.json();
+      throw new Error(error.error?.message || 'Failed to generate text');
     }
 
     const data = await response.json();
+    if (!data.choices?.[0]?.message?.content) {
+      throw new Error('Invalid response from OpenAI');
+    }
+
     return data.choices[0].message.content;
   } catch (error) {
     console.error('Error generating text:', error);
-    toast.error('Failed to generate text. Please try again.');
+    toast.error(error instanceof Error ? error.message : 'Failed to generate text');
     return null;
   }
 }
 
 export async function generateComprehensionQuestions(text: string) {
   try {
+    if (!import.meta.env.VITE_OPENAI_API_KEY) {
+      throw new Error('OpenAI API key not configured');
+    }
+
     const response = await fetch(OPENAI_API_URL, {
       method: 'POST',
       headers: {
@@ -58,19 +72,21 @@ export async function generateComprehensionQuestions(text: string) {
             role: "user",
             content: text
           }
-        ]
+        ],
+        temperature: 0.7
       })
     });
 
     if (!response.ok) {
-      throw new Error('Failed to generate questions');
+      const error = await response.json();
+      throw new Error(error.error?.message || 'Failed to generate questions');
     }
 
     const data = await response.json();
     return JSON.parse(data.choices[0].message.content);
   } catch (error) {
     console.error('Error generating questions:', error);
-    toast.error('Failed to generate questions. Please try again.');
+    toast.error(error instanceof Error ? error.message : 'Failed to generate questions');
     return null;
   }
 }
