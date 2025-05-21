@@ -56,6 +56,9 @@ export default {
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
       },
+      opacity: {
+        '50': '0.5'
+      },
     },
   },
   plugins: [],

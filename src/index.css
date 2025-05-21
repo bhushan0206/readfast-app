@@ -138,11 +138,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .word-focus {
-  @apply bg-primary-100 dark:bg-primary-900/50 px-1 rounded font-medium;
+  @apply bg-primary-100 dark:bg-primary-900 dark:bg-opacity-50 px-1 rounded font-medium;
 }
 
 .progress-bar {
-  @apply bg-primary-100 dark:bg-primary-900/30 rounded-full overflow-hidden h-2;
+  @apply bg-primary-100 dark:bg-primary-900 dark:bg-opacity-30 rounded-full overflow-hidden h-2;
 }
 
 .progress-bar-fill {
@@ -170,7 +170,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .input {
-  @apply border border-neutral-300 dark:border-neutral-700 focus:border-primary-500 dark:focus:border-primary-400 focus:ring-2 focus:ring-primary-100 dark:focus:ring-primary-900/50 rounded-lg px-3 py-2 w-full outline-none transition-all dark:bg-neutral-800 dark:text-neutral-100;
+  @apply border border-neutral-300 dark:border-neutral-700 focus:border-primary-500 dark:focus:border-primary-400 focus:ring-2 focus:ring-primary-100 dark:focus:ring-primary-900 dark:focus:ring-opacity-50 rounded-lg px-3 py-2 w-full outline-none transition-all dark:bg-neutral-800 dark:text-neutral-100;
 }
 
 .badge {
@@ -178,11 +178,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .badge-primary {
-  @apply bg-primary-100 text-primary-800 dark:bg-primary-900/50 dark:text-primary-100;
+  @apply bg-primary-100 text-primary-800 dark:bg-primary-900 dark:bg-opacity-50 dark:text-primary-100;
 }
 
 .badge-success {
-  @apply bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-100;
+  @apply bg-success-100 text-success-800 dark:bg-success-900 dark:bg-opacity-50 dark:text-success-100;
 }
 
 .animated-bg {
