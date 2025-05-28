@@ -1,8 +1,9 @@
+@import './features/reading/styles/reading-animations.css';
+@import './styles/responsive.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import './styles/responsive.css';
 
 :root {
   --primary-50: #eff6ff;

@@ -3,6 +3,8 @@ import { create } from 'zustand';
 import { supabase, signInWithProvider } from '../services/supabase';
 import type { Provider } from '@supabase/supabase-js';
 import { toast } from 'sonner';
+import { AuthSecurity, SessionManager } from '../utils/securityMiddleware';
+import { logger, LogCategory } from '../utils/logger';
 
 interface AuthState {
   user: any | null;
@@ -48,6 +50,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       set({ loading: true });
       
+      // Security validation
+      const validation = AuthSecurity.validateLoginAttempt(email, password);
+      if (!validation.isValid) {
+        set({ loading: false });
+        const errorMessage = validation.errors.join(', ');
+        toast.error(errorMessage);
+        logger.warn(LogCategory.AUTH, 'Login validation failed', { email, errors: validation.errors });
+        throw new Error(errorMessage);
+      }
+      
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -55,11 +67,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       
       if (error) throw error;
       
+      // Reset login attempts on successful login
+      AuthSecurity.resetLoginAttempts(email);
+      
       const { data: profile } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', data.user.id)
         .single();
+      
+      // Extend session
+      SessionManager.extendSession(24);
       
       set({
         user: data.user,
@@ -67,9 +85,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         loading: false,
       });
       
+      logger.info(LogCategory.AUTH, 'User login successful', { userId: data.user.id });
       toast.success('Logged in successfully');
     } catch (error: any) {
       set({ loading: false });
+      logger.error(LogCategory.AUTH, 'Login failed', { email }, error);
       toast.error(error.message || 'Failed to login');
       throw error;
     }
@@ -92,10 +112,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       set({ loading: true });
 
-      // Validate input before making the request
-      if (!email || !password) {
+      // Security validation
+      const validation = AuthSecurity.validateRegistration(email, password, password);
+      if (!validation.isValid) {
         set({ loading: false });
-        throw new Error('Email and password are required');
+        const errorMessage = validation.errors.join(', ');
+        toast.error(errorMessage);
+        logger.warn(LogCategory.AUTH, 'Registration validation failed', { email, errors: validation.errors });
+        throw new Error(errorMessage);
       }
 
       const { data, error } = await supabase.auth.signUp({
@@ -122,7 +146,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           .eq('id', data.user.id)
           .single();
         if (profileError) {
-          console.error("Profile fetch error after signup:", profileError);
+          logger.error(LogCategory.AUTH, 'Profile fetch error after signup', { userId: data.user.id }, profileError);
         }
         profile = profileData;
       }
@@ -133,10 +157,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         loading: false,
       });
 
+      logger.info(LogCategory.AUTH, 'User registration successful', { userId: data.user?.id });
       toast.success('Registration successful');
     } catch (error: any) {
       set({ loading: false });
-      console.error("Registration failed:", error);
+      logger.error(LogCategory.AUTH, 'Registration failed', { email }, error);
       toast.error(error.message || 'Failed to register');
       throw error;
     }
@@ -146,7 +171,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       set({ loading: true });
       
+      const { user } = get();
+      
       await supabase.auth.signOut();
+      
+      // Clear session data
+      SessionManager.clearSession();
       
       set({
         user: null,
@@ -154,9 +184,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         loading: false,
       });
       
+      logger.info(LogCategory.AUTH, 'User logout successful', { userId: user?.id });
       toast.success('Logged out successfully');
     } catch (error: any) {
       set({ loading: false });
+      logger.error(LogCategory.AUTH, 'Logout failed', {}, error);
       toast.error(error.message || 'Failed to logout');
       throw error;
     }

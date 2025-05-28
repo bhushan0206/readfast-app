@@ -18,6 +18,7 @@ import ReadingSession from './features/reading/pages/ReadingSession';
 import Library from './features/library/pages/Library';
 import Profile from './features/profile/pages/Profile';
 import Settings from './features/profile/pages/Settings';
+import AdminPage from './features/admin/pages/AdminPage';
 import Achievements from './features/gamification/pages/Achievements';
 import NotFound from './shared/pages/NotFound';
 
@@ -76,6 +77,7 @@ function App() {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/achievements" element={<Achievements />} />
+                {import.meta.env.DEV && <Route path="/admin" element={<AdminPage />} />}
               </Route>
               
               {/* Fallback routes */}

@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Play, Pause, SkipForward, SkipBack, Settings } from 'lucide-react';
+import { Play, Pause, SkipForward, SkipBack, Settings, RotateCcw } from 'lucide-react';
 import { getTextById } from '../../../services/supabase';
 import { useReadingStore } from '../../../store/readingStore';
 import Button from '../../../shared/components/Button';
 import ComprehensionQuiz from '../components/ComprehensionQuiz';
 import SpeedControl from '../components/SpeedControl';
-import TextDisplay from '../components/TextDisplay';
+import TextDisplayEnhanced from '../components/TextDisplayEnhanced';
+import { logger, LogCategory } from '../../../utils/enhancedLogger-clean';
+import { ContentSecurity } from '../../../utils/securityMiddleware-clean';
+import { errorMonitor } from '../../../utils/errorMonitoring';
 
 const ReadingSession: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -25,6 +28,7 @@ const ReadingSession: React.FC = () => {
     pauseReading,
     resumeReading, 
     stopReading,
+    restartReading,
     isReading,
     progress,
     readingSettings
@@ -36,15 +40,24 @@ const ReadingSession: React.FC = () => {
       
       try {
         setLoading(true);
+        logger.info(LogCategory.READING, 'Fetching text for reading session', { textId: id });
+        
         const textData = await getTextById(id);
         setText(textData);
         setCurrentText(textData);
         
-        // Split the text into words
-        const words = textData.content.split(/\s+/).filter(Boolean);
+        // Split the text into words with security validation
+        const sanitizedContent = ContentSecurity.sanitizeTextInput(textData.content);
+        const words = sanitizedContent.split(/\s+/).filter(Boolean);
         setTextWords(words);
+        
+        logger.info(LogCategory.READING, 'Text loaded successfully', { 
+          textId: id, 
+          wordCount: words.length,
+          title: textData.title 
+        });
       } catch (err) {
-        console.error('Error fetching text:', err);
+        logger.error(LogCategory.READING, 'Error fetching text', { textId: id }, err as Error);
         setError('Failed to load the text. Please try again.');
       } finally {
         setLoading(false);
@@ -56,13 +69,35 @@ const ReadingSession: React.FC = () => {
 
   const handleStartReading = () => {
     if (id) {
+      logger.logUserAction('start_reading', undefined, { textId: id, title: text?.title });
       startReading(id);
     }
   };
 
   const handleStopReading = async () => {
-    await stopReading(textWords.length);
-    setShowComprehension(true);
+    try {
+      logger.logUserAction('stop_reading', undefined, { 
+        textId: id, 
+        progress: Math.round(progress),
+        wordsRead: Math.floor(textWords.length * (progress / 100))
+      });
+      
+      await stopReading(textWords.length);
+      setShowComprehension(true);
+    } catch (error) {
+      errorMonitor.recordError(error as Error, {
+        component: 'ReadingSession',
+        action: 'stop_reading',
+        metadata: { textId: id, progress }
+      });
+    }
+  };
+
+  const handleRestartReading = () => {
+    if (id) {
+      logger.logUserAction('restart_reading', undefined, { textId: id, previousProgress: progress });
+      restartReading();
+    }
   };
 
   if (loading) {
@@ -118,10 +153,15 @@ const ReadingSession: React.FC = () => {
       
       {/* Text Display */}
       <div className="card mb-6 reading-container">
-        <TextDisplay 
+        <TextDisplayEnhanced 
           text={textWords} 
           isReading={isReading} 
-          settings={readingSettings}
+          settings={{
+            speed: readingSettings.speed,
+            fontSize: readingSettings.fontSize,
+            mode: readingSettings.mode,
+            chunkSize: readingSettings.chunkSize
+          }}
         />
       </div>
       
@@ -171,6 +211,18 @@ const ReadingSession: React.FC = () => {
           >
             Skip 10 words
           </Button>
+          
+          {/* Restart Button - Always show when not reading and has progress */}
+          {!isReading && progress > 0 && (
+            <Button
+              variant="outline"
+              leftIcon={<RotateCcw size={18} />}
+              onClick={handleRestartReading}
+              className="text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300"
+            >
+              Restart
+            </Button>
+          )}
         </div>
         
         <Button

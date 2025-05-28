@@ -28,6 +28,7 @@ interface ReadingState {
   pauseReading: () => void;
   resumeReading: () => void;
   stopReading: (completedWords?: number) => Promise<void>;
+  restartReading: () => void;
   updateProgress: (index: number, totalWords: number) => void;
   updateSettings: (settings: Partial<ReadingState['readingSettings']>) => void;
   setComprehensionScore: (score: number) => void;
@@ -79,6 +80,22 @@ export const useReadingStore = create<ReadingState>((set, get) => ({
 
   resumeReading: () => {
     set({ isReading: true });
+  },
+
+  restartReading: () => {
+    set({
+      isReading: false,
+      progress: 0,
+      currentIndex: 0,
+      currentSession: {
+        ...get().currentSession,
+        startTime: null,
+        endTime: null,
+        wordsRead: 0,
+        wpm: 0,
+        comprehensionScore: null,
+      }
+    });
   },
 
   stopReading: async (completedWords) => {
