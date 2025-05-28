@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Wand2 } from 'lucide-react';
-import { generateText } from '../../../services/openai';
+import { generateText } from '../../../services/groq'; // Adjust the import path as necessary
 import Button from '../../../shared/components/Button';
 import Input from '../../../shared/components/Input';
 
@@ -33,13 +33,15 @@ const GenerateTextModal: React.FC<GenerateTextModalProps> = ({ onClose, onGenera
       }
 
       // Extract title and content
-      const lines = generatedText.split('\n');
-      const title = lines[0].replace(/^#\s*/, '');
-      const content = lines.slice(2).join('\n');
+      const lines = generatedText.split('\n').filter(line => line.trim() !== '');
+      const title = lines[0].replace(/^#\s*/, '').trim() || `Article about ${topic}`;
+      const content = lines.slice(1).join('\n').trim() || generatedText;
 
       onGenerate(title, content);
+      onClose();
     } catch (err) {
-      setError('Failed to generate text. Please try again.');
+      console.error('Error generating text:', err);
+      setError(err instanceof Error ? err.message : 'Failed to generate text. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -53,6 +55,8 @@ const GenerateTextModal: React.FC<GenerateTextModalProps> = ({ onClose, onGenera
           <button 
             className="text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
             onClick={onClose}
+            title="Close modal"
+            aria-label="Close modal"
           >
             <X size={20} />
           </button>
@@ -65,7 +69,7 @@ const GenerateTextModal: React.FC<GenerateTextModalProps> = ({ onClose, onGenera
               placeholder="Enter a topic (e.g., Space Exploration, Climate Change)"
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
-              error={error}
+              error={error ?? undefined}
             />
             
             <p className="text-sm text-neutral-600 dark:text-neutral-400">

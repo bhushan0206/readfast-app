@@ -12,144 +12,114 @@ export interface Database {
       profiles: {
         Row: {
           id: string
-          created_at: string
-          updated_at: string
-          email: string
           full_name: string | null
           avatar_url: string | null
-          reading_speed: number
-          font_size: number
-          theme: string
-          reading_level: string
+          created_at: string
+          updated_at: string
         }
         Insert: {
           id: string
-          created_at?: string
-          updated_at?: string
-          email: string
           full_name?: string | null
           avatar_url?: string | null
-          reading_speed?: number
-          font_size?: number
-          theme?: string
-          reading_level?: string
+          created_at?: string
+          updated_at?: string
         }
         Update: {
           id?: string
-          created_at?: string
-          updated_at?: string
-          email?: string
           full_name?: string | null
           avatar_url?: string | null
-          reading_speed?: number
-          font_size?: number
-          theme?: string
-          reading_level?: string
+          created_at?: string
+          updated_at?: string
         }
       }
       texts: {
         Row: {
           id: string
-          created_at: string
-          user_id: string | null
+          user_id: string
           title: string
           content: string
-          category: string | null
-          difficulty: number
           is_custom: boolean
-          metadata: Json | null
+          created_at: string
+          updated_at: string
         }
         Insert: {
           id?: string
-          created_at?: string
-          user_id?: string | null
+          user_id: string
           title: string
           content: string
-          category?: string | null
-          difficulty?: number
           is_custom?: boolean
-          metadata?: Json | null
+          created_at?: string
+          updated_at?: string
         }
         Update: {
           id?: string
-          created_at?: string
-          user_id?: string | null
+          user_id?: string
           title?: string
           content?: string
-          category?: string | null
-          difficulty?: number
           is_custom?: boolean
-          metadata?: Json | null
-        }
-      }
-      reading_sessions: {
-        Row: {
-          id: string
-          created_at: string
-          user_id: string
-          text_id: string
-          start_time: string
-          end_time: string | null
-          words_read: number
-          wpm: number
-          comprehension_score: number | null
-        }
-        Insert: {
-          id?: string
           created_at?: string
-          user_id: string
-          text_id: string
-          start_time: string
-          end_time?: string | null
-          words_read: number
-          wpm: number
-          comprehension_score?: number | null
-        }
-        Update: {
-          id?: string
-          created_at?: string
-          user_id?: string
-          text_id?: string
-          start_time?: string
-          end_time?: string | null
-          words_read?: number
-          wpm?: number
-          comprehension_score?: number | null
+          updated_at?: string
         }
       }
       reading_stats: {
         Row: {
           id: string
-          created_at: string
           user_id: string
-          avg_wpm: number
-          max_wpm: number
           total_words_read: number
-          total_time_spent: number
-          avg_comprehension: number | null
+          total_time_reading: number
+          average_wpm: number
           sessions_completed: number
+          created_at: string
+          updated_at: string
         }
         Insert: {
           id?: string
-          created_at?: string
           user_id: string
-          avg_wpm?: number
-          max_wpm?: number
           total_words_read?: number
-          total_time_spent?: number
-          avg_comprehension?: number | null
+          total_time_reading?: number
+          average_wpm?: number
           sessions_completed?: number
+          created_at?: string
+          updated_at?: string
         }
         Update: {
           id?: string
-          created_at?: string
           user_id?: string
-          avg_wpm?: number
-          max_wpm?: number
           total_words_read?: number
-          total_time_spent?: number
-          avg_comprehension?: number | null
+          total_time_reading?: number
+          average_wpm?: number
           sessions_completed?: number
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      reading_sessions: {
+        Row: {
+          id: string
+          user_id: string
+          text_id: string
+          wpm: number
+          accuracy: number
+          duration: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          text_id: string
+          wpm: number
+          accuracy: number
+          duration: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          text_id?: string
+          wpm?: number
+          accuracy?: number
+          duration?: number
+          created_at?: string
         }
       }
       achievements: {
@@ -157,25 +127,25 @@ export interface Database {
           id: string
           name: string
           description: string
-          criteria: Json
           icon: string
-          level: number
+          requirement: number
+          created_at: string
         }
         Insert: {
           id?: string
           name: string
           description: string
-          criteria: Json
           icon: string
-          level: number
+          requirement: number
+          created_at?: string
         }
         Update: {
           id?: string
           name?: string
           description?: string
-          criteria?: Json
           icon?: string
-          level?: number
+          requirement?: number
+          created_at?: string
         }
       }
       user_achievements: {
@@ -184,21 +154,18 @@ export interface Database {
           user_id: string
           achievement_id: string
           unlocked_at: string
-          progress: number
         }
         Insert: {
           id?: string
           user_id: string
           achievement_id: string
-          unlocked_at: string
-          progress: number
+          unlocked_at?: string
         }
         Update: {
           id?: string
           user_id?: string
           achievement_id?: string
           unlocked_at?: string
-          progress?: number
         }
       }
     }

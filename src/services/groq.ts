@@ -8,56 +8,50 @@ const validateApiKey = (key: string): boolean => {
   return key.startsWith('gsk_') && key.length > 20;
 };
 
-export async function generateText(prompt: string) {
-  try {
-    const apiKey = config.groq.apiKey;
-    
-    if (!apiKey) {
-      throw new Error('Groq API key not configured');
-    }
-    
-    if (!validateApiKey(apiKey)) {
-      throw new Error('Invalid Groq API key format');
-    }
+export async function generateText(prompt: string): Promise<string> {
+  const apiKey = import.meta.env.VITE_GROQ_API_KEY;
+  
+  if (!apiKey) {
+    throw new Error('Groq API key is not configured. Please add VITE_GROQ_API_KEY to your .env file.');
+  }
 
+  try {
     const response = await fetch(GROQ_API_URL, {
       method: 'POST',
       headers: {
+        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: "llama3-8b-8192",
+        model: 'llama-3.1-8b-instant', // Fast and supported Groq model
         messages: [
           {
-            role: "system",
-            content: "You are a helpful assistant that generates reading content for a speed reading application. Generate content that is educational, engaging, and suitable for practice."
-          },
-          {
-            role: "user",
+            role: 'user',
             content: prompt
           }
         ],
+        max_tokens: 2000,
         temperature: 0.7,
-        max_tokens: 1000
-      })
+      }),
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error?.message || 'Failed to generate text');
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(`Groq API error: ${response.status} ${response.statusText}. ${errorData.error?.message || ''}`);
     }
 
     const data = await response.json();
-    if (!data.choices?.[0]?.message?.content) {
-      throw new Error('Invalid response from Groq');
+    
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      throw new Error('Invalid response format from Groq API');
     }
 
     return data.choices[0].message.content;
   } catch (error) {
-    console.error('Error generating text:', error);
-    toast.error(error instanceof Error ? error.message : 'Failed to generate text');
-    return null;
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error('Failed to generate text using Groq API');
   }
 }
 

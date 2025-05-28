@@ -21,6 +21,7 @@ import NotFound from './shared/pages/NotFound';
 
 // Components
 import ProtectedRoute from './shared/components/ProtectedRoute';
+import ErrorBoundary from './shared/components/ErrorBoundary';
 
 function App() {
   const { initialized } = useAuthStore();
@@ -41,7 +42,7 @@ function App() {
   }
 
   return (
-    <>
+    <ErrorBoundary>
       {/* Dynamic Background */}
       <div className="fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-br from-primary-100/30 to-secondary-100/30 dark:from-primary-900/30 dark:to-secondary-900/30 animate-gradient" />
@@ -78,7 +79,7 @@ function App() {
           </Routes>
         </motion.div>
       </AnimatePresence>
-    </>
+    </ErrorBoundary>
   );
 }
 
