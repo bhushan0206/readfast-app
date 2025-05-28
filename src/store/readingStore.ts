@@ -3,6 +3,7 @@
 import { create } from 'zustand';
 import { saveReadingSession, updateReadingStats } from '../services/supabase';
 import { useAuthStore } from './authStore';
+import { useAchievementStore } from './achievementStore';
 
 interface ReadingState {
   currentText: any | null;
@@ -101,6 +102,7 @@ export const useReadingStore = create<ReadingState>((set, get) => ({
   stopReading: async (completedWords) => {
     const { currentSession, readingSettings } = get();
     const { user } = useAuthStore.getState();
+    const { checkAchievements } = useAchievementStore.getState();
     
     if (!user || !currentSession.textId || !currentSession.startTime) {
       set({ isReading: false });
@@ -163,6 +165,28 @@ export const useReadingStore = create<ReadingState>((set, get) => ({
       }
       
       await updateReadingStats(user.id, statsUpdate);
+      
+      // Get the current cumulative stats from database for achievement checking
+      try {
+        const { getUserReadingStats } = await import('../services/supabase');
+        const currentStats = await getUserReadingStats(user.id);
+        
+        if (currentStats) {
+          console.log('Current cumulative stats from DB:', currentStats);
+          
+          // Pass cumulative stats to achievement checker
+          await checkAchievements({
+            total_words_read: currentStats.total_words_read || 0,
+            sessions_completed: currentStats.sessions_completed || 0,
+            max_wpm: currentStats.max_wpm || 0,
+            avg_wpm: currentStats.avg_wpm || 0,
+            avg_comprehension: currentStats.avg_comprehension || null
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching stats for achievement checking:', error);
+      }
+      
     } catch (error) {
       console.error('Error saving reading session or stats:', error);
     }

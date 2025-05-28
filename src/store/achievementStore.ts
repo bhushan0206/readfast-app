@@ -32,10 +32,51 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
         .select('*')
         .order('level', { ascending: true });
 
-      if (achievementsError) throw achievementsError;
+      if (achievementsError) {
+        console.error('Error loading achievements:', achievementsError);
+        // Set some default achievements if database fails
+        const defaultAchievements = [
+          {
+            id: 'first-session',
+            name: 'First Steps',
+            description: 'Complete your first reading session',
+            icon: '🎯',
+            criteria: { sessions_completed: 1 }
+          },
+          {
+            id: 'word-explorer',
+            name: 'Word Explorer',
+            description: 'Read 1000 words',
+            icon: '📖',
+            criteria: { total_words_read: 1000 }
+          },
+          {
+            id: 'speed-reader',
+            name: 'Speed Reader',
+            description: 'Reach 300 WPM reading speed',
+            icon: '⚡',
+            criteria: { max_wpm: 300 }
+          }
+        ];
+        
+        set({
+          achievements: defaultAchievements,
+          loading: false,
+          initialized: true,
+        });
+        
+        // Load user achievements
+        const userAchievements = await getUserAchievements(user.id);
+        set({ userAchievements: userAchievements || [] });
+        
+        return;
+      }
 
       // Load user achievements
       const userAchievements = await getUserAchievements(user.id);
+
+      console.log('Loaded achievements:', achievements);
+      console.log('Loaded user achievements:', userAchievements);
 
       set({
         achievements: achievements || [],
@@ -51,9 +92,16 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
 
   checkAchievements: async (stats) => {
     const { user } = useAuthStore.getState();
-    if (!user) return [];
+    if (!user) {
+      console.log('No user found for achievement checking');
+      return [];
+    }
 
     const { achievements, userAchievements } = get();
+    console.log('Checking achievements with stats:', stats);
+    console.log('Available achievements:', achievements);
+    console.log('Current user achievements:', userAchievements);
+    
     const newlyUnlockedAchievements: any[] = [];
 
     // Map of already unlocked achievement IDs for quick lookup
@@ -63,29 +111,40 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
 
     for (const achievement of achievements) {
       // Skip if already unlocked
-      if (unlockedMap.has(achievement.id)) continue;
+      if (unlockedMap.has(achievement.id)) {
+        console.log(`Achievement ${achievement.name} already unlocked`);
+        continue;
+      }
 
       const criteria = achievement.criteria as any;
       let progress = 0;
       let unlocked = false;
 
+      console.log(`Checking achievement: ${achievement.name}`, { criteria, stats });
+
       // Check different criteria types
       if (criteria.total_words_read && stats.total_words_read >= criteria.total_words_read) {
         progress = 100;
         unlocked = true;
+        console.log(`Achievement ${achievement.name} unlocked by total_words_read!`);
       } else if (criteria.max_wpm && stats.max_wpm >= criteria.max_wpm) {
         progress = 100;
         unlocked = true;
+        console.log(`Achievement ${achievement.name} unlocked by max_wpm!`);
       } else if (criteria.sessions_completed && stats.sessions_completed >= criteria.sessions_completed) {
         progress = 100;
         unlocked = true;
+        console.log(`Achievement ${achievement.name} unlocked by sessions_completed!`);
       } else if (criteria.total_words_read) {
         // Calculate progress percentage
         progress = Math.min(100, Math.round((stats.total_words_read / criteria.total_words_read) * 100));
+        console.log(`Progress for ${achievement.name} (words): ${progress}%`);
       } else if (criteria.max_wpm) {
         progress = Math.min(100, Math.round((stats.max_wpm / criteria.max_wpm) * 100));
+        console.log(`Progress for ${achievement.name} (wpm): ${progress}%`);
       } else if (criteria.sessions_completed) {
         progress = Math.min(100, Math.round((stats.sessions_completed / criteria.sessions_completed) * 100));
+        console.log(`Progress for ${achievement.name} (sessions): ${progress}%`);
       }
 
       // If achievement unlocked, save it
@@ -112,13 +171,83 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
 
           // Show toast notification using React.createElement instead of JSX
           toast.success(
-            React.createElement('div', { className: 'flex items-center space-x-2' },
-              React.createElement('div', { className: 'w-8 h-8 flex items-center justify-center bg-accent-100 text-accent-800 rounded-full' }, '🏆'),
-              React.createElement('div', null,
-                React.createElement('div', { className: 'font-medium' }, 'Achievement Unlocked!'),
-                React.createElement('div', { className: 'text-sm text-neutral-600' }, achievement.name)
+            React.createElement('div', { 
+              className: 'flex items-center space-x-3 p-2',
+              style: {
+                background: 'linear-gradient(135deg, #fef3c7 0%, #f59e0b 100%)',
+                borderRadius: '12px',
+                border: '2px solid #d97706',
+                boxShadow: '0 10px 25px rgba(251, 191, 36, 0.3)',
+                animation: 'bounce 0.6s ease-in-out'
+              }
+            },
+              React.createElement('div', { 
+                className: 'relative',
+                style: {
+                  background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
+                  borderRadius: '50%',
+                  padding: '12px',
+                  boxShadow: '0 4px 12px rgba(251, 191, 36, 0.4)',
+                  animation: 'pulse 2s infinite'
+                }
+              }, 
+                React.createElement('span', { 
+                  style: { 
+                    fontSize: '24px',
+                    filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))'
+                  } 
+                }, '🏆')
+              ),
+              React.createElement('div', { className: 'flex-1' },
+                React.createElement('div', { 
+                  className: 'font-bold text-amber-900 text-lg',
+                  style: { 
+                    textShadow: '0 1px 2px rgba(0,0,0,0.1)',
+                    marginBottom: '2px'
+                  }
+                }, '🎉 Achievement Unlocked!'),
+                React.createElement('div', { 
+                  className: 'text-amber-800 font-semibold text-base',
+                  style: { marginBottom: '4px' }
+                }, achievement.name),
+                React.createElement('div', { 
+                  className: 'text-amber-700 text-sm opacity-90'
+                }, achievement.description)
+              ),
+              React.createElement('div', {
+                style: {
+                  position: 'absolute',
+                  top: '-5px',
+                  right: '-5px',
+                  background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                  borderRadius: '50%',
+                  width: '20px',
+                  height: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 2px 8px rgba(239, 68, 68, 0.5)',
+                  animation: 'ping 1s cubic-bezier(0, 0, 0.2, 1) infinite'
+                }
+              },
+                React.createElement('span', { 
+                  style: { 
+                    color: 'white',
+                    fontSize: '10px',
+                    fontWeight: 'bold'
+                  }
+                }, '!')
               )
-            )
+            ),
+            {
+              duration: 5000,
+              style: {
+                background: 'transparent',
+                border: 'none',
+                boxShadow: 'none',
+                padding: '0'
+              }
+            }
           );
         } catch (error) {
           console.error('Error saving achievement:', error);

@@ -76,11 +76,10 @@ export const updateReadingStats = async (userId: string, updates: any) => {
   // Ensure all numeric values are integers for database compatibility
   const sanitizedUpdates = {
     ...updates,
-    total_time_read: updates.total_time_read ? Math.round(updates.total_time_read) : updates.total_time_read,
+    total_words_read: updates.total_words_read ? Math.round(updates.total_words_read) : updates.total_words_read,
     words_read: updates.words_read ? Math.round(updates.words_read) : updates.words_read,
     average_wpm: updates.average_wpm ? Math.round(updates.average_wpm) : updates.average_wpm,
-    sessions_completed: updates.sessions_completed ? Math.round(updates.sessions_completed) : updates.sessions_completed,
-    updated_at: new Date().toISOString()
+    sessions_completed: updates.sessions_completed ? Math.round(updates.sessions_completed) : updates.sessions_completed
   };
 
   const { data: existingStats } = await supabase

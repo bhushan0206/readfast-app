@@ -11,6 +11,26 @@ const Achievements: React.FC = () => {
       loadAchievements();
     }
   }, [initialized, loadAchievements]);
+
+  // Refresh achievements when component mounts or becomes visible
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && initialized) {
+        loadAchievements();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    // Also refresh on mount if already initialized
+    if (initialized) {
+      loadAchievements();
+    }
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [initialized, loadAchievements]);
   
   useEffect(() => {
     // Create a map of user achievements for easy lookup
@@ -111,18 +131,37 @@ const Achievements: React.FC = () => {
             return (
               <div 
                 key={achievement.id} 
-                className={`card bg-white dark:bg-neutral-800 p-6 rounded-lg border border-neutral-200 dark:border-neutral-700 ${
-                  isUnlocked ? 'border-success-200 dark:border-success-700 bg-success-50 dark:bg-success-900/20' : ''
+                className={`card bg-white dark:bg-neutral-800 p-6 rounded-lg border border-neutral-200 dark:border-neutral-700 transition-all duration-300 hover:transform hover:scale-105 hover:shadow-lg ${
+                  isUnlocked 
+                    ? 'border-success-200 dark:border-success-700 shadow-success-200 dark:shadow-success-900/50 shadow-lg' 
+                    : 'hover:border-primary-300 dark:hover:border-primary-600'
                 }`}
+                style={isUnlocked ? {
+                  background: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #a7f3d0 100%)',
+                  boxShadow: '0 8px 25px rgba(34, 197, 94, 0.15)',
+                  animation: 'glow 3s ease-in-out infinite alternate'
+                } : {}}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className={`p-3 rounded-full text-lg ${
+                    <div className={`p-3 rounded-full text-lg transition-all duration-300 ${
                       isUnlocked 
-                        ? 'bg-success-100 dark:bg-success-900/50 text-success-700 dark:text-success-300' 
+                        ? 'bg-success-100 dark:bg-success-900/50 text-success-700 dark:text-success-300 shadow-lg transform scale-110' 
                         : 'bg-neutral-100 dark:bg-neutral-700 text-neutral-500 dark:text-neutral-400'
-                    }`}>
-                      {achievement.icon}
+                    }`}
+                    style={isUnlocked ? {
+                      background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
+                      boxShadow: '0 4px 12px rgba(251, 191, 36, 0.3)',
+                      animation: 'pulse 2s infinite'
+                    } : {}}
+                    >
+                      <span style={{ 
+                        fontSize: '20px',
+                        filter: isUnlocked ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' : 'grayscale(1)',
+                        transition: 'all 0.3s ease'
+                      }}>
+                        {achievement.icon}
+                      </span>
                     </div>
                     <div>
                       <h3 className="font-semibold text-neutral-900 dark:text-white">{achievement.name}</h3>
@@ -131,29 +170,44 @@ const Achievements: React.FC = () => {
                   </div>
                   
                   {isUnlocked && (
-                    <span className="badge badge-success bg-success-100 dark:bg-success-900/50 text-success-700 dark:text-success-300 px-2 py-1 rounded-full text-xs">Unlocked</span>
+                    <span className="bg-gradient-to-r from-success-400 to-success-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg animate-pulse">
+                      ✓ Unlocked
+                    </span>
                   )}
                 </div>
                 
                 {!isUnlocked && (
                   <div className="mt-4">
-                    <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-2.5">
+                    <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-3 overflow-hidden relative">
                       <div 
-                        className="bg-primary-500 dark:bg-primary-400 h-2.5 rounded-full transition-all duration-300" 
-                        style={{ width: `${progress}%` }}
-                      ></div>
+                        className="bg-gradient-to-r from-primary-400 to-primary-600 dark:from-primary-400 dark:to-primary-500 h-3 rounded-full transition-all duration-700 ease-out relative overflow-hidden" 
+                        style={{ 
+                          width: `${progress}%`,
+                          boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)'
+                        }}
+                      >
+                        <div 
+                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                          style={{
+                            animation: progress > 0 ? 'shimmer 2s ease-in-out infinite' : 'none',
+                            transform: 'skewX(-20deg)'
+                          }}
+                        />
+                      </div>
                     </div>
-                    <div className="flex justify-between text-xs text-neutral-500 dark:text-neutral-400 mt-1">
-                      <span>Progress</span>
-                      <span>{progress}%</span>
+                    <div className="flex justify-between text-xs text-neutral-500 dark:text-neutral-400 mt-2">
+                      <span className="font-medium">Progress</span>
+                      <span className="font-bold text-primary-600 dark:text-primary-400">{progress}%</span>
                     </div>
                   </div>
                 )}
                 
                 {isUnlocked && (
-                  <p className="text-xs text-success-600 dark:text-success-400 mt-2">
-                    Unlocked on {new Date(userAchievement.unlocked_at).toLocaleDateString()}
-                  </p>
+                  <div className="mt-3 p-2 bg-success-50 dark:bg-success-900/20 rounded-lg border border-success-200 dark:border-success-800">
+                    <p className="text-xs text-success-600 dark:text-success-400 font-medium">
+                      🎉 Unlocked on {new Date(userAchievement.unlocked_at).toLocaleDateString()}
+                    </p>
+                  </div>
                 )}
               </div>
             );
@@ -177,9 +231,16 @@ const Achievements: React.FC = () => {
             return (
               <div 
                 key={achievement.id} 
-                className={`card bg-white dark:bg-neutral-800 p-6 rounded-lg border border-neutral-200 dark:border-neutral-700 ${
-                  isUnlocked ? 'border-success-200 dark:border-success-700 bg-success-50 dark:bg-success-900/20' : ''
+                className={`card bg-white dark:bg-neutral-800 p-6 rounded-lg border border-neutral-200 dark:border-neutral-700 transition-all duration-300 hover:transform hover:scale-105 hover:shadow-lg ${
+                  isUnlocked 
+                    ? 'border-secondary-200 dark:border-secondary-700 shadow-secondary-200 dark:shadow-secondary-900/50 shadow-lg' 
+                    : 'hover:border-primary-300 dark:hover:border-primary-600'
                 }`}
+                style={isUnlocked ? {
+                  background: 'linear-gradient(135deg, #fef7ff 0%, #f3e8ff 50%, #e9d5ff 100%)',
+                  boxShadow: '0 8px 25px rgba(168, 85, 247, 0.15)',
+                  animation: 'glow 3s ease-in-out infinite alternate'
+                } : {}}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-center space-x-3">
@@ -243,9 +304,16 @@ const Achievements: React.FC = () => {
             return (
               <div 
                 key={achievement.id} 
-                className={`card bg-white dark:bg-neutral-800 p-6 rounded-lg border border-neutral-200 dark:border-neutral-700 ${
-                  isUnlocked ? 'border-success-200 dark:border-success-700 bg-success-50 dark:bg-success-900/20' : ''
+                className={`card bg-white dark:bg-neutral-800 p-6 rounded-lg border border-neutral-200 dark:border-neutral-700 transition-all duration-300 hover:transform hover:scale-105 hover:shadow-lg ${
+                  isUnlocked 
+                    ? 'border-accent-200 dark:border-accent-700 shadow-accent-200 dark:shadow-accent-900/50 shadow-lg' 
+                    : 'hover:border-primary-300 dark:hover:border-primary-600'
                 }`}
+                style={isUnlocked ? {
+                  background: 'linear-gradient(135deg, #fff7ed 0%, #fed7aa 50%, #fdba74 100%)',
+                  boxShadow: '0 8px 25px rgba(251, 146, 60, 0.15)',
+                  animation: 'glow 3s ease-in-out infinite alternate'
+                } : {}}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-center space-x-3">

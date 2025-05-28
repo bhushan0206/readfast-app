@@ -81,14 +81,19 @@ const ComprehensionQuiz: React.FC<ComprehensionQuizProps> = ({ text, onComplete 
         const stats = await getUserReadingStats(user.id);
         
         if (stats) {
-          const newAchievements = await checkAchievements({
+          // Create updated stats for achievement checking
+          const updatedStats = {
             ...stats,
-            // Add session data
             sessions_completed: stats.sessions_completed + 1,
             total_words_read: stats.total_words_read + (currentSession.wordsRead || 0),
-            max_wpm: Math.max(stats.max_wpm, currentSession.wpm || 0),
-          });
+            max_wpm: Math.max(stats.max_wpm || 0, currentSession.wpm || 0),
+            avg_comprehension: Math.round(
+              ((stats.avg_comprehension || 0) * stats.sessions_completed + calculatedScore) / 
+              (stats.sessions_completed + 1)
+            ),
+          };
           
+          const newAchievements = await checkAchievements(updatedStats);
           setUnlockedAchievements(newAchievements);
         }
       }
