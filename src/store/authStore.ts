@@ -13,6 +13,7 @@ interface AuthState {
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   loginWithProvider: (provider: Provider) => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
   register: (email: string, password: string, fullName: string) => Promise<void>;
   logout: () => Promise<void>;
   updateProfile: (updates: any) => Promise<void>;
@@ -27,22 +28,46 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   initializeAuth: async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (user) {
-        const { data: profile } = await supabase
+      console.log('🔄 Initializing auth...');
+      set({ loading: true });
+
+      const { data: { session }, error } = await supabase.auth.getSession();
+
+      if (error) {
+        console.error('❌ Session error:', error);
+        set({ user: null, profile: null, initialized: true, loading: false });
+        return;
+      }
+
+      if (session?.user) {
+        console.log('✅ Session found for:', session.user.email);
+        
+        // Get user profile
+        const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('*')
-          .eq('id', user.id)
+          .eq('id', session.user.id)
           .single();
-        
-        set({ user, profile, initialized: true });
+
+        if (profileError && profileError.code !== 'PGRST116') {
+          console.error('❌ Profile fetch error:', profileError);
+        }
+
+        set({
+          user: session.user,
+          profile: profile || null,
+          initialized: true,
+          loading: false
+        });
+
+        console.log('✅ Auth initialized successfully');
       } else {
-        set({ initialized: true });
+        console.log('ℹ️ No session found');
+        set({ user: null, profile: null, initialized: true, loading: false });
       }
     } catch (error) {
-      console.error('Error initializing auth:', error);
-      set({ initialized: true });
+      console.error('💥 Auth initialization error:', error);
+      set({ user: null, profile: null, initialized: true, loading: false });
     }
   },
 
@@ -98,10 +123,38 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   loginWithProvider: async (provider: Provider) => {
     try {
       set({ loading: true });
-      await signInWithProvider(provider);
-      // Note: The actual user session will be handled by the auth callback
-      // where we'll check for account linking
+      
+      console.log('🚀 Starting OAuth login with provider:', provider);
+      console.log('🌍 Current origin:', window.location.origin);
+      
+      // Determine the correct redirect URL based on current location
+      const redirectUrl = `${window.location.origin}/auth/callback`;
+      console.log('🔗 Redirect URL:', redirectUrl);
+      
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: redirectUrl,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'select_account',
+          }
+        }
+      });
+
+      console.log('📤 OAuth response:', { data, error });
+
+      if (error) {
+        console.error('❌ OAuth error:', error);
+        set({ loading: false });
+        toast.error(error.message || `Failed to login with ${provider}`);
+        throw error;
+      }
+
+      console.log('✅ OAuth initiated successfully, should redirect to Google...');
+      // Don't set loading to false here - the redirect will handle it
     } catch (error: any) {
+      console.error('💥 Provider login error:', error);
       set({ loading: false });
       toast.error(error.message || `Failed to login with ${provider}`);
       throw error;
@@ -194,6 +247,35 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
+  loginWithGoogle: async () => {
+    try {
+      console.log('🔵 Starting Google OAuth...');
+      set({ loading: true });
+
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/login`
+        }
+      });
+
+      if (error) {
+        console.error('❌ Google OAuth error:', error);
+        toast.error(`Google sign-in failed: ${error.message}`);
+        set({ loading: false });
+        return;
+      }
+
+      console.log('✅ Google OAuth initiated successfully');
+      // Don't set loading to false here - let the auth state change handle it
+    } catch (error) {
+      console.error('💥 Google OAuth error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      toast.error(`Google sign-in failed: ${errorMessage}`);
+      set({ loading: false });
+    }
+  },
+
   updateProfile: async (updates) => {
     try {
       const { user } = get();
@@ -225,5 +307,5 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 }));
 
-// Initialize auth on import
-useAuthStore.getState().initializeAuth();
+// Don't auto-initialize to prevent conflicts with OAuth flow
+// Initialize manually when needed

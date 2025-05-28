@@ -1,37 +1,18 @@
-// Service Worker for handling SPA navigation
-const CACHE_NAME = 'readfast-v1';
-const urlsToCache = [
-  '/',
-  '/static/js/bundle.js',
-  '/static/css/main.css',
-  '/manifest.json'
-];
+// Service Worker - DISABLED for OAuth compatibility
+console.log('Service Worker disabled to fix OAuth callback issues');
 
-// Install event - cache resources
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(urlsToCache))
-  );
+// Don't intercept any requests - let them pass through normally
+self.addEventListener('fetch', (event) => {
+  // Do nothing - let all requests pass through
+  return;
 });
 
-// Fetch event - serve from cache, fallback to index.html for navigation
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        // Return cached version or fetch from network
-        if (response) {
-          return response;
-        }
-        
-        // For navigation requests, serve index.html to handle SPA routing
-        if (event.request.mode === 'navigate') {
-          return caches.match('/index.html');
-        }
-        
-        return fetch(event.request);
-      }
-    )
-  );
+self.addEventListener('install', (event) => {
+  console.log('Service Worker installing but disabled');
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
+  console.log('Service Worker activating but disabled');
+  event.waitUntil(self.clients.claim());
 });

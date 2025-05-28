@@ -21,7 +21,7 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   
-  const { login, loginWithProvider, loading } = useAuthStore();
+  const { login, loginWithGoogle, loading } = useAuthStore();
   const navigate = useNavigate();
 
   const validate = () => {
@@ -131,7 +131,7 @@ const Login: React.FC = () => {
           <Button
             type="button"
             variant="outline"
-            onClick={() => loginWithProvider('google')}
+            onClick={() => loginWithGoogle()}
             leftIcon={<GoogleIcon />}
             disabled={loading}
             className="w-full"

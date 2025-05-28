@@ -14,19 +14,51 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     
-    <!-- Register Service Worker for mobile navigation -->
+    <!-- OAuth Fix: Service Worker completely disabled -->
     <script>
+      // EMERGENCY: Completely disable and clean up service workers for OAuth
+      console.log('🔧 OAuth Fix: Disabling service workers...');
+      
       if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js')
-            .then((registration) => {
-              console.log('SW registered: ', registration);
-            })
-            .catch((registrationError) => {
-              console.log('SW registration failed: ', registrationError);
-            });
+        // Prevent any service worker registration
+        const originalRegister = navigator.serviceWorker.register;
+        navigator.serviceWorker.register = () => {
+          console.log('⚠️ Service worker registration blocked for OAuth compatibility');
+          return Promise.resolve();
+        };
+        
+        // Unregister existing service workers immediately
+        navigator.serviceWorker.getRegistrations().then(registrations => {
+          registrations.forEach(registration => {
+            console.log('🗑️ Unregistering service worker:', registration.scope);
+            registration.unregister();
+          });
+          
+          if (registrations.length > 0) {
+            console.log(`✅ Unregistered ${registrations.length} service workers`);
+          }
+        }).catch(error => {
+          console.error('❌ Error unregistering service workers:', error);
         });
+        
+        // Clear caches
+        if ('caches' in window) {
+          caches.keys().then(cacheNames => {
+            cacheNames.forEach(cacheName => {
+              console.log('🗑️ Clearing cache:', cacheName);
+              caches.delete(cacheName);
+            });
+            
+            if (cacheNames.length > 0) {
+              console.log(`✅ Cleared ${cacheNames.length} caches`);
+            }
+          }).catch(error => {
+            console.error('❌ Error clearing caches:', error);
+          });
+        }
       }
+      
+      console.log('✅ OAuth fix applied - service workers disabled');
     </script>
   </body>
 </html>

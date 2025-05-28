@@ -5,6 +5,7 @@ import { useThemeStore } from './store/themeStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { useNavigationFix } from './hooks/useNavigationFix';
+import { supabase } from './services/supabase';
 
 // Layouts
 import MainLayout from './shared/layouts/MainLayout';
@@ -14,7 +15,6 @@ import AuthLayout from './shared/layouts/AuthLayout';
 import Dashboard from './features/dashboard/pages/Dashboard';
 import Login from './features/auth/pages/Login';
 import Register from './features/auth/pages/Register';
-import AuthCallback from './features/auth/pages/AuthCallback';
 import ReadingSession from './features/reading/pages/ReadingSession';
 import Library from './features/library/pages/Library';
 import Profile from './features/profile/pages/Profile';
@@ -30,9 +30,10 @@ import NotFound from './shared/pages/NotFound';
 // Components
 import ProtectedRoute from './shared/components/ProtectedRoute';
 import ErrorBoundary from './shared/components/ErrorBoundary';
+import AuthDebug from './shared/components/AuthDebug';
 
 function App() {
-  const { initialized } = useAuthStore();
+  const { initialized, initializeAuth } = useAuthStore();
   const { theme } = useThemeStore();
   
   // Fix mobile navigation issues
@@ -41,6 +42,38 @@ function App() {
   React.useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
   }, [theme]);
+
+  // Initialize auth on app load
+  React.useEffect(() => {
+    console.log('🚀 App mounted, initializing auth...');
+    initializeAuth();
+  }, []);
+
+  // Listen for auth state changes
+  React.useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('🔄 Auth state change:', event, session?.user?.email);
+        
+        if (event === 'SIGNED_IN' && session) {
+          console.log('✅ User signed in via auth state change');
+          await initializeAuth();
+        } else if (event === 'SIGNED_OUT') {
+          console.log('❌ User signed out');
+          useAuthStore.setState({ 
+            user: null, 
+            profile: null, 
+            initialized: true, 
+            loading: false 
+          });
+        }
+      }
+    );
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [initializeAuth]);
 
   if (!initialized) {
     return (
@@ -74,7 +107,6 @@ function App() {
               <Route element={<AuthLayout />}>
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
-                <Route path="/auth/callback" element={<AuthCallback />} />
               </Route>
               
               {/* Protected Routes */}
@@ -98,6 +130,9 @@ function App() {
             </Routes>
           </motion.div>
         </AnimatePresence>
+        
+        {/* Debug component for development */}
+        <AuthDebug />
       </ErrorBoundary>
     </ThemeProvider>
   );
