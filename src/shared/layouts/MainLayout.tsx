@@ -1,5 +1,5 @@
 import React from 'react';
-import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import ThemeToggle from '../components/ThemeToggle';
 import { 
@@ -16,7 +16,7 @@ import {
   X
 } from 'lucide-react';
 
-const MainLayout: React.FC = () => {
+const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { logout, profile } = useAuthStore();
@@ -40,7 +40,7 @@ const MainLayout: React.FC = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-neutral-50 dark:bg-neutral-900">
       {/* Top Navigation */}
       <header className="bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-700 w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -165,10 +165,8 @@ const MainLayout: React.FC = () => {
       )}
 
       {/* Main Content */}
-      <main className="flex-grow bg-neutral-50 dark:bg-neutral-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <Outlet />
-        </div>
+      <main className="flex-1">
+        {children}
       </main>
 
       {/* Footer */}

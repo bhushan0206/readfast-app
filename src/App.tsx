@@ -45,21 +45,37 @@ function App() {
 
   // Initialize auth on app load
   React.useEffect(() => {
-    console.log('🚀 App mounted, initializing auth...');
-    initializeAuth();
+    const initAuth = async () => {
+      try {
+        await initializeAuth();
+      } catch (error) {
+        console.error('💥 Failed to initialize auth:', error);
+        // Force set initialized to true if initialization fails
+        useAuthStore.setState({ initialized: true, loading: false });
+      }
+    };
+
+    initAuth();
+
+    // Failsafe: Force initialization after 5 seconds if still loading
+    const timeout = setTimeout(() => {
+      const { initialized, loading } = useAuthStore.getState();
+      if (!initialized && loading) {
+        console.warn('⚠️ Auth initialization timeout, forcing initialized state');
+        useAuthStore.setState({ initialized: true, loading: false });
+      }
+    }, 5000);
+
+    return () => clearTimeout(timeout);
   }, []);
 
   // Listen for auth state changes
   React.useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('🔄 Auth state change:', event, session?.user?.email);
-        
         if (event === 'SIGNED_IN' && session) {
-          console.log('✅ User signed in via auth state change');
           await initializeAuth();
         } else if (event === 'SIGNED_OUT') {
-          console.log('❌ User signed out');
           useAuthStore.setState({ 
             user: null, 
             profile: null, 
@@ -103,30 +119,107 @@ function App() {
             className="min-h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors"
           >
             <Routes>
-              {/* Auth Routes */}
-              <Route element={<AuthLayout />}>
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-              </Route>
+              {/* Debug Route */}
+              <Route path="/debug" element={<div>Debug Route Working!</div>} />
               
-              {/* Protected Routes */}
-              <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/read/:id" element={<ReadingSession />} />
-                <Route path="/library" element={<Library />} />
-                <Route path="/analytics" element={<Analytics />} />
-                <Route path="/vocabulary" element={<VocabularyBuilder />} />
-                <Route path="/vocabulary/review" element={<VocabularyReview />} />
-                <Route path="/vocabulary/demo" element={<VocabularyDemo />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/achievements" element={<Achievements />} />
-                {import.meta.env.DEV && <Route path="/admin" element={<AdminPage />} />}
-              </Route>
+              {/* Auth Routes */}
+              <Route path="/login" element={<AuthLayout><Login /></AuthLayout>} />
+              <Route path="/register" element={<AuthLayout><Register /></AuthLayout>} />
+              
+              {/* Main App Routes - All use the same pattern */}
+              <Route path="/" element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Dashboard />
+                  </MainLayout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/read/:id" element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <ReadingSession />
+                  </MainLayout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/library" element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Library />
+                  </MainLayout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/analytics" element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Analytics />
+                  </MainLayout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/vocabulary" element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <VocabularyBuilder />
+                  </MainLayout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/vocabulary/review" element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <VocabularyReview />
+                  </MainLayout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/vocabulary/demo" element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <VocabularyDemo />
+                  </MainLayout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/profile" element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Profile />
+                  </MainLayout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/settings" element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Settings />
+                  </MainLayout>
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/achievements" element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Achievements />
+                  </MainLayout>
+                </ProtectedRoute>
+              } />
+              
+              {import.meta.env.DEV && (
+                <Route path="/admin" element={
+                  <ProtectedRoute>
+                    <MainLayout>
+                      <AdminPage />
+                    </MainLayout>
+                  </ProtectedRoute>
+                } />
+              )}
               
               {/* Fallback routes */}
               <Route path="/404" element={<NotFound />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </motion.div>
         </AnimatePresence>

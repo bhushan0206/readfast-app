@@ -1,10 +1,10 @@
 import React from 'react';
-import { Outlet, Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { BookOpen } from 'lucide-react';
 import ThemeToggle from '../components/ThemeToggle';
 
-const AuthLayout: React.FC = () => {
+const AuthLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuthStore();
 
   // Redirect if already authenticated
@@ -40,7 +40,7 @@ const AuthLayout: React.FC = () => {
           </div>
           
           <div className="bg-white dark:bg-neutral-800 py-8 px-4 shadow-sm rounded-lg sm:px-10 border border-neutral-200 dark:border-neutral-700">
-            <Outlet />
+            {children}
           </div>
         </div>
       </div>

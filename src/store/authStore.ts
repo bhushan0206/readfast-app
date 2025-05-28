@@ -29,9 +29,24 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   initializeAuth: async () => {
     try {
       console.log('🔄 Initializing auth...');
+      const currentState = get();
+      
+      // Don't initialize if already loading or initialized
+      if (currentState.loading) {
+        console.log('⏳ Auth already initializing, skipping...');
+        return;
+      }
+      
       set({ loading: true });
 
-      const { data: { session }, error } = await supabase.auth.getSession();
+      // Add timeout to prevent hanging
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Auth initialization timeout')), 10000)
+      );
+
+      const authPromise = supabase.auth.getSession();
+
+      const { data: { session }, error } = await Promise.race([authPromise, timeoutPromise]) as any;
 
       if (error) {
         console.error('❌ Session error:', error);
@@ -42,20 +57,32 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       if (session?.user) {
         console.log('✅ Session found for:', session.user.email);
         
-        // Get user profile
-        const { data: profile, error: profileError } = await supabase
+        // Get user profile with timeout
+        const profilePromise = supabase
           .from('profiles')
           .select('*')
           .eq('id', session.user.id)
           .single();
 
-        if (profileError && profileError.code !== 'PGRST116') {
-          console.error('❌ Profile fetch error:', profileError);
+        const profileTimeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Profile fetch timeout')), 5000)
+        );
+
+        let profile = null;
+        try {
+          const { data: profileData, error: profileError } = await Promise.race([profilePromise, profileTimeoutPromise]) as any;
+          if (profileError && profileError.code !== 'PGRST116') {
+            console.error('❌ Profile fetch error:', profileError);
+          } else {
+            profile = profileData;
+          }
+        } catch (profileTimeoutError) {
+          console.warn('⚠️ Profile fetch timed out, continuing without profile');
         }
 
         set({
           user: session.user,
-          profile: profile || null,
+          profile: profile,
           initialized: true,
           loading: false
         });

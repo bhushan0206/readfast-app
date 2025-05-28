@@ -6,6 +6,8 @@ export const useNavigationFix = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log('🔧 Navigation fix hook activated');
+
     // Handle browser back/forward navigation on mobile
     const handlePopState = (event: PopStateEvent) => {
       // Check if we're on a valid route

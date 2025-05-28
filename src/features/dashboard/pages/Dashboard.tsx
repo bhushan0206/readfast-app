@@ -11,6 +11,9 @@ import AnalyticsSummary from '../components/AnalyticsSummary';
 import ReadingAssistant from '../../../shared/components/ReadingAssistant';
 
 const Dashboard: React.FC = () => {
+  // Add debug logging
+  console.log('🏠 Dashboard component rendered');
+
   const { user, profile } = useAuthStore();
   const [stats, setStats] = useState<any>(null);
   const [sessions, setSessions] = useState<any[]>([]);
