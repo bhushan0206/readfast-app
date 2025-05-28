@@ -7,6 +7,7 @@ import Input from '../../../shared/components/Input';
 import TextCard from '../components/TextCard';
 import AddCustomTextModal from '../components/AddCustomTextModal';
 import GenerateTextModal from '../components/GenerateTextModal';
+import ReadingAssistant from '../../../shared/components/ReadingAssistant';
 
 interface Text {
   id: string;
@@ -166,6 +167,7 @@ const Library: React.FC = () => {
           <Button
             variant={selectedCategory === null ? "primary" : "outline"}
             onClick={() => setSelectedCategory(null)}
+            className={selectedCategory === null ? "text-white dark:text-white" : "text-neutral-700 dark:text-neutral-200"}
           >
             All
           </Button>
@@ -174,6 +176,7 @@ const Library: React.FC = () => {
               key={category}
               variant={selectedCategory === category ? "primary" : "outline"}
               onClick={() => setSelectedCategory(category)}
+              className={selectedCategory === category ? "text-white dark:text-white" : "text-neutral-700 dark:text-neutral-200"}
             >
               {category}
             </Button>
@@ -226,6 +229,14 @@ const Library: React.FC = () => {
           onGenerate={handleGenerateText}
         />
       )}
+      
+      {/* Reading Assistant */}
+      <ReadingAssistant 
+        onRecommendation={(topic) => {
+          setShowGenerateModal(true);
+          // You could pre-fill the topic in the generate modal
+        }}
+      />
     </div>
   );
 };

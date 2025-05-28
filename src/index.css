@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import './styles/responsive.css';
+
 :root {
   --primary-50: #eff6ff;
   --primary-100: #dbeafe;

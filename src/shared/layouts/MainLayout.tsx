@@ -1,6 +1,7 @@
 import React from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
+import ThemeToggle from '../components/ThemeToggle';
 import { 
   BookOpen, 
   Library, 
@@ -63,6 +64,7 @@ const MainLayout: React.FC = () => {
                   {item.label}
                 </Link>
               ))}
+              <ThemeToggle />
               <button
                 onClick={handleLogout}
                 className="flex items-center py-2 px-3 rounded-md text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
@@ -72,8 +74,9 @@ const MainLayout: React.FC = () => {
               </button>
             </nav>
 
-            {/* Mobile menu button */}
-            <div className="flex items-center md:hidden">
+            {/* Mobile menu button and theme toggle */}
+            <div className="flex items-center space-x-2 md:hidden">
+              <ThemeToggle />
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="inline-flex items-center justify-center p-2 rounded-md text-neutral-400 dark:text-neutral-500 hover:text-neutral-500 dark:hover:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"

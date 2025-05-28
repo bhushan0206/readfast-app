@@ -1,0 +1,212 @@
+/* Mobile-first responsive utilities */
+
+/* Dark mode text improvements */
+.dark {
+  /* Ensure all text is readable in dark mode */
+  color: #e5e7eb; /* neutral-200 */
+}
+
+.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+  color: #ffffff; /* white */
+}
+
+.dark p, .dark span, .dark div {
+  color: #d1d5db; /* neutral-300 */
+}
+
+.dark .text-neutral-600 {
+  color: #9ca3af !important; /* neutral-400 */
+}
+
+.dark .text-neutral-700 {
+  color: #d1d5db !important; /* neutral-300 */
+}
+
+.dark .text-neutral-800 {
+  color: #e5e7eb !important; /* neutral-200 */
+}
+
+.dark .text-neutral-900 {
+  color: #ffffff !important; /* white */
+}
+
+/* Button text improvements for dark mode */
+.dark .btn-primary {
+  color: #ffffff !important;
+}
+
+.dark .btn-outline {
+  color: #e5e7eb !important;
+}
+
+.dark .btn-outline:hover {
+  color: #ffffff !important;
+  background-color: #374151 !important; /* neutral-700 */
+}
+
+/* Card text improvements */
+.dark .card {
+  background-color: #1f2937 !important; /* neutral-800 */
+  border-color: #374151 !important; /* neutral-700 */
+  color: #e5e7eb !important; /* neutral-200 */
+}
+
+.dark .card h1, .dark .card h2, .dark .card h3, .dark .card h4 {
+  color: #ffffff !important;
+}
+
+/* Form input improvements */
+.dark input, .dark textarea, .dark select {
+  background-color: #1f2937 !important; /* neutral-800 */
+  border-color: #4b5563 !important; /* neutral-600 */
+  color: #e5e7eb !important; /* neutral-200 */
+}
+
+.dark input::placeholder, .dark textarea::placeholder {
+  color: #9ca3af !important; /* neutral-400 */
+}
+
+/* Badge and label improvements */
+.dark .badge {
+  background-color: #374151 !important; /* neutral-700 */
+  color: #e5e7eb !important; /* neutral-200 */
+}
+
+/* Link improvements */
+.dark a {
+  color: #60a5fa !important; /* blue-400 */
+}
+
+.dark a:hover {
+  color: #93c5fd !important; /* blue-300 */
+}
+
+@media (max-width: 640px) {
+  /* Mobile-specific overrides */
+  .modal-content {
+    margin: 1rem;
+    max-height: calc(100vh - 2rem);
+  }
+  
+  .reading-assistant {
+    bottom: 1rem;
+    right: 1rem;
+    left: 1rem;
+    width: auto;
+  }
+  
+  .speed-reader-display {
+    font-size: clamp(1.5rem, 4vw, 3rem);
+    padding: 1rem;
+  }
+  
+  .navbar-mobile {
+    padding: 0.5rem 1rem;
+  }
+  
+  .text-card {
+    padding: 1rem;
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Tablet adjustments */
+  .grid-responsive {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+  
+  .flex-mobile-stack {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .text-mobile-center {
+    text-align: center;
+  }
+}
+
+/* Touch-friendly button sizes */
+@media (hover: none) and (pointer: coarse) {
+  .btn {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.75rem 1rem;
+  }
+  
+  .btn-sm {
+    min-height: 40px;
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .btn-lg {
+    min-height: 48px;
+    padding: 1rem 1.5rem;
+  }
+}
+
+/* Focus states for keyboard navigation */
+.focus-visible {
+  outline: 2px solid theme('colors.primary.500');
+  outline-offset: 2px;
+}
+
+/* Dark mode transitions */
+* {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Improved text readability */
+.reading-content {
+  line-height: 1.6;
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
+  max-width: 65ch;
+  margin: 0 auto;
+}
+
+/* Loading states */
+.loading-skeleton {
+  background: linear-gradient(90deg, 
+    theme('colors.neutral.200') 25%, 
+    theme('colors.neutral.100') 50%, 
+    theme('colors.neutral.200') 75%
+  );
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+.dark .loading-skeleton {
+  background: linear-gradient(90deg, 
+    theme('colors.neutral.700') 25%, 
+    theme('colors.neutral.600') 50%, 
+    theme('colors.neutral.700') 75%
+  );
+  background-size: 200% 100%;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Animation performance optimizations */
+.animate-optimized {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+}
+
+/* Safe area insets for mobile devices */
+@supports (padding: max(0px)) {
+  .safe-area-padding {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+}

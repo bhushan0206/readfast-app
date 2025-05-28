@@ -81,7 +81,7 @@ const AddCustomTextModal: React.FC<AddCustomTextModalProps> = ({ onClose, onSubm
               </label>
               <textarea
                 id="content"
-                rows={12}
+                rows={window.innerWidth < 768 ? 8 : 12}
                 placeholder="Paste or type the text content here..."
                 className={`
                   w-full rounded-lg px-3 py-2 resize-y
@@ -90,7 +90,7 @@ const AddCustomTextModal: React.FC<AddCustomTextModalProps> = ({ onClose, onSubm
                   text-neutral-900 dark:text-neutral-100
                   placeholder-neutral-500 dark:placeholder-neutral-400
                   focus:outline-none focus:ring-2 focus:ring-primary-100 dark:focus:ring-primary-900 focus:border-primary-500 dark:focus:border-primary-400
-                  transition-all
+                  transition-all text-sm md:text-base
                 `}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
@@ -106,11 +106,12 @@ const AddCustomTextModal: React.FC<AddCustomTextModalProps> = ({ onClose, onSubm
           </div>
         </form>
         
-        <div className="border-t border-neutral-200 dark:border-neutral-700 p-4 flex justify-end space-x-3">
+        <div className="border-t border-neutral-200 dark:border-neutral-700 p-4 flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3">
           <Button
             variant="outline"
             onClick={onClose}
             disabled={loading}
+            className="w-full sm:w-auto order-2 sm:order-1"
           >
             Cancel
           </Button>
@@ -118,6 +119,7 @@ const AddCustomTextModal: React.FC<AddCustomTextModalProps> = ({ onClose, onSubm
             variant="primary"
             onClick={handleSubmit}
             isLoading={loading}
+            className="w-full sm:w-auto order-1 sm:order-2"
           >
             Add Text
           </Button>
