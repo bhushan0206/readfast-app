@@ -119,7 +119,7 @@ const ReadingSession: React.FC = () => {
   }
 
   if (showComprehension) {
-    return <ComprehensionQuiz text={text} onComplete={() => navigate('/dashboard')} />;
+    return <ComprehensionQuiz text={text} onComplete={() => navigate('/', { replace: true })} />;
   }
 
   return (

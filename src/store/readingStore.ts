@@ -148,18 +148,18 @@ export const useReadingStore = create<ReadingState>((set, get) => ({
         avg_wpm?: number;
         avg_comprehension?: number | null;
       } = {
-        total_words_read: wordsRead,
-        total_time_spent: timeSpentMs / 1000, // Convert to seconds
+        total_words_read: Math.round(wordsRead), // Ensure integer
+        total_time_spent: Math.round(timeSpentMs / 1000), // Convert to seconds and round
         sessions_completed: 1,
       };
       
       if (wpm > 0) {
-        statsUpdate.max_wpm = wpm;
-        statsUpdate.avg_wpm = wpm;
+        statsUpdate.max_wpm = Math.round(wpm); // Ensure integer
+        statsUpdate.avg_wpm = Math.round(wpm); // Ensure integer
       }
       
       if (currentSession.comprehensionScore !== null) {
-        statsUpdate.avg_comprehension = currentSession.comprehensionScore;
+        statsUpdate.avg_comprehension = Math.round(currentSession.comprehensionScore || 0); // Ensure integer
       }
       
       await updateReadingStats(user.id, statsUpdate);

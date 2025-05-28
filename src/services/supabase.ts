@@ -73,6 +73,16 @@ export const getUserReadingStats = async (userId: string) => {
 };
 
 export const updateReadingStats = async (userId: string, updates: any) => {
+  // Ensure all numeric values are integers for database compatibility
+  const sanitizedUpdates = {
+    ...updates,
+    total_time_read: updates.total_time_read ? Math.round(updates.total_time_read) : updates.total_time_read,
+    words_read: updates.words_read ? Math.round(updates.words_read) : updates.words_read,
+    average_wpm: updates.average_wpm ? Math.round(updates.average_wpm) : updates.average_wpm,
+    sessions_completed: updates.sessions_completed ? Math.round(updates.sessions_completed) : updates.sessions_completed,
+    updated_at: new Date().toISOString()
+  };
+
   const { data: existingStats } = await supabase
     .from('reading_stats')
     .select('*')
@@ -83,7 +93,7 @@ export const updateReadingStats = async (userId: string, updates: any) => {
     // Create new stats record
     const { data, error } = await supabase
       .from('reading_stats')
-      .insert({ user_id: userId, ...updates })
+      .insert({ user_id: userId, ...sanitizedUpdates })
       .select()
       .single();
       
@@ -97,7 +107,7 @@ export const updateReadingStats = async (userId: string, updates: any) => {
     // Update existing stats
     const { data, error } = await supabase
       .from('reading_stats')
-      .update(updates)
+      .update(sanitizedUpdates)
       .eq('user_id', userId)
       .select()
       .single();

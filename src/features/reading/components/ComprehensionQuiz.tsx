@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { CheckCircle, XCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useReadingStore } from '../../../store/readingStore';
 import { useAchievementStore } from '../../../store/achievementStore';
 import { useAuthStore } from '../../../store/authStore';
@@ -32,6 +33,7 @@ const generateMockQuestions = (text: any) => {
 };
 
 const ComprehensionQuiz: React.FC<ComprehensionQuizProps> = ({ text, onComplete }) => {
+  const navigate = useNavigate();
   const { user } = useAuthStore();
   const { currentSession, setComprehensionScore } = useReadingStore();
   const { checkAchievements } = useAchievementStore();
@@ -104,41 +106,41 @@ const ComprehensionQuiz: React.FC<ComprehensionQuizProps> = ({ text, onComplete 
       <div className="max-w-2xl mx-auto text-center">
         <div className="card">
           <div className="mb-6">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-primary-100 rounded-full mb-4">
-              <CheckCircle size={40} className="text-primary-600" />
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-primary-100 dark:bg-primary-900/20 rounded-full mb-4">
+              <CheckCircle size={40} className="text-primary-600 dark:text-primary-400" />
             </div>
-            <h2 className="text-2xl font-bold text-neutral-900">Reading Complete!</h2>
-            <p className="text-neutral-600 mt-2">
+            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Reading Complete!</h2>
+            <p className="text-neutral-600 dark:text-neutral-300 mt-2">
               You've finished reading "{text.title}" with a comprehension score of:
             </p>
-            <div className="text-5xl font-bold text-primary-600 mt-2">{score}%</div>
+            <div className="text-5xl font-bold text-primary-600 dark:text-primary-400 mt-2">{score}%</div>
           </div>
           
           <div className="mt-8">
             <div className="grid grid-cols-2 gap-4 text-left">
-              <div className="p-4 bg-neutral-50 rounded-lg">
-                <h3 className="font-medium text-neutral-800">Reading Speed</h3>
-                <p className="text-2xl font-bold text-primary-600">{currentSession.wpm || 0} WPM</p>
+              <div className="p-4 bg-neutral-50 dark:bg-neutral-800/50 rounded-lg border border-neutral-200 dark:border-neutral-700">
+                <h3 className="font-medium text-neutral-800 dark:text-neutral-200">Reading Speed</h3>
+                <p className="text-2xl font-bold text-primary-600 dark:text-primary-400">{currentSession.wpm || 0} WPM</p>
               </div>
-              <div className="p-4 bg-neutral-50 rounded-lg">
-                <h3 className="font-medium text-neutral-800">Words Read</h3>
-                <p className="text-2xl font-bold text-primary-600">{currentSession.wordsRead || 0}</p>
+              <div className="p-4 bg-neutral-50 dark:bg-neutral-800/50 rounded-lg border border-neutral-200 dark:border-neutral-700">
+                <h3 className="font-medium text-neutral-800 dark:text-neutral-200">Words Read</h3>
+                <p className="text-2xl font-bold text-primary-600 dark:text-primary-400">{currentSession.wordsRead || 0}</p>
               </div>
             </div>
           </div>
           
           {unlockedAchievements.length > 0 && (
-            <div className="mt-8 p-4 bg-accent-50 rounded-lg border border-accent-200">
-              <h3 className="font-medium text-accent-800 mb-2">Achievements Unlocked!</h3>
+            <div className="mt-8 p-4 bg-success-50 dark:bg-success-900/20 rounded-lg border border-success-200 dark:border-success-800">
+              <h3 className="font-medium text-success-800 dark:text-success-300 mb-2">Achievements Unlocked!</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {unlockedAchievements.map((achievement) => (
-                  <div key={achievement.id} className="flex items-center p-2 bg-white rounded-lg achievement-unlocked">
-                    <div className="bg-accent-100 p-2 rounded-full text-accent-700 mr-3">
+                  <div key={achievement.id} className="flex items-center p-2 bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 achievement-unlocked">
+                    <div className="bg-success-100 dark:bg-success-900/30 p-2 rounded-full text-success-700 dark:text-success-400 mr-3">
                       🏆
                     </div>
                     <div>
-                      <p className="font-medium text-neutral-800">{achievement.name}</p>
-                      <p className="text-xs text-neutral-500">{achievement.description}</p>
+                      <p className="font-medium text-neutral-800 dark:text-neutral-200">{achievement.name}</p>
+                      <p className="text-xs text-neutral-500 dark:text-neutral-400">{achievement.description}</p>
                     </div>
                   </div>
                 ))}
@@ -147,7 +149,13 @@ const ComprehensionQuiz: React.FC<ComprehensionQuizProps> = ({ text, onComplete 
           )}
           
           <div className="mt-8">
-            <Button onClick={onComplete} size="lg">
+            <Button 
+              onClick={() => {
+                // Navigate to the dashboard (which is the root route)
+                onComplete();
+              }} 
+              size="lg"
+            >
               Back to Dashboard
             </Button>
           </div>
@@ -161,10 +169,10 @@ const ComprehensionQuiz: React.FC<ComprehensionQuizProps> = ({ text, onComplete 
   return (
     <div className="max-w-2xl mx-auto">
       <div className="card">
-        <h2 className="text-xl font-bold text-neutral-900 mb-6">Comprehension Check</h2>
+        <h2 className="text-xl font-bold text-neutral-900 dark:text-white mb-6">Comprehension Check</h2>
         
         <div className="mb-4">
-          <div className="flex justify-between text-sm text-neutral-500 mb-1">
+          <div className="flex justify-between text-sm text-neutral-500 dark:text-neutral-400 mb-1">
             <span>Question {currentQuestionIndex + 1} of {questions.length}</span>
           </div>
           <div className="progress-bar">
@@ -176,7 +184,7 @@ const ComprehensionQuiz: React.FC<ComprehensionQuizProps> = ({ text, onComplete 
         </div>
         
         <div className="my-6">
-          <h3 className="text-lg font-medium text-neutral-800 mb-4">{currentQuestion.question}</h3>
+          <h3 className="text-lg font-medium text-neutral-800 dark:text-neutral-200 mb-4">{currentQuestion.question}</h3>
           
           <div className="space-y-3">
             {currentQuestion.options.map((option, index) => (
@@ -185,23 +193,23 @@ const ComprehensionQuiz: React.FC<ComprehensionQuizProps> = ({ text, onComplete 
                 className={`
                   p-3 rounded-lg border cursor-pointer transition-colors
                   ${answers[currentQuestionIndex] === index 
-                    ? 'bg-primary-50 border-primary-300' 
-                    : 'bg-white border-neutral-200 hover:border-neutral-300'}
+                    ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-300 dark:border-primary-600' 
+                    : 'bg-white dark:bg-neutral-800 border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600'}
                 `}
                 onClick={() => handleAnswer(index)}
               >
                 <div className="flex items-center">
                   <div className={`
-                    w-5 h-5 rounded-full mr-3 flex items-center justify-center border
+                    w-5 h-5 rounded-full mr-3 flex items-center justify-center border-2
                     ${answers[currentQuestionIndex] === index 
                       ? 'border-primary-500 bg-primary-500 text-white' 
-                      : 'border-neutral-300'}
+                      : 'border-neutral-300 dark:border-neutral-600 bg-transparent'}
                   `}>
                     {answers[currentQuestionIndex] === index && (
-                      <CheckCircle size={14} />
+                      <div className="w-2 h-2 bg-white rounded-full"></div>
                     )}
                   </div>
-                  <span>{option}</span>
+                  <span className="text-neutral-700 dark:text-neutral-200">{option}</span>
                 </div>
               </div>
             ))}

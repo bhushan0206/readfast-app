@@ -203,7 +203,7 @@ INSERT INTO achievements (name, description, criteria, icon, level) VALUES
 ('Reading Machine', 'Reach a reading speed of 700 WPM', '{"max_wpm": 700}', '⚡', 3),
 ('Beginner Reader', 'Complete 5 reading sessions', '{"sessions_completed": 5}', '🏆', 1),
 ('Dedicated Reader', 'Complete 20 reading sessions', '{"sessions_completed": 20}', '🏆', 2),
-('Master Reader', 'Complete 50 reading sessions', '{"sessions_completed": 50}', '🏆', 3);
+('Master Reader', '', '{"sessions_completed": 50}', '🏆', 3);
 
 -- Create sample texts
 INSERT INTO texts (title, content, category, difficulty, is_custom) VALUES
