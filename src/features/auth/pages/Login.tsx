@@ -110,7 +110,7 @@ const Login: React.FC = () => {
             <div className="w-full border-t border-neutral-300 dark:border-neutral-700"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white dark:bg-neutral-900 text-neutral-500">
+            <span className="px-2 bg-white dark:bg-neutral-900 text-neutral-500 dark:text-neutral-400">
               Or continue with
             </span>
           </div>
@@ -139,7 +139,7 @@ const Login: React.FC = () => {
       <div className="mt-6 text-center">
         <p className="text-sm text-neutral-600 dark:text-neutral-400">
           Don't have an account?{' '}
-          <Link to="/register" className="font-medium text-primary-600 hover:text-primary-500">
+          <Link to="/register" className="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300">
             Create one now
           </Link>
         </p>

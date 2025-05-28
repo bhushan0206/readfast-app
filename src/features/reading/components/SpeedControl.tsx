@@ -56,7 +56,7 @@ const SpeedControl: React.FC = () => {
       {/* Reading Speed */}
       <div className="space-y-2">
         <div className="flex justify-between items-center">
-          <h4 className="font-medium text-neutral-900">Reading Speed: {readingSettings.speed} WPM</h4>
+          <h4 className="font-medium text-neutral-900 dark:text-white">Reading Speed: {readingSettings.speed} WPM</h4>
           <div className="flex space-x-2">
             <Button
               size="sm"
@@ -90,7 +90,7 @@ const SpeedControl: React.FC = () => {
       {/* Font Size */}
       <div className="space-y-2">
         <div className="flex justify-between items-center">
-          <h4 className="font-medium text-neutral-900">Font Size: {readingSettings.fontSize}px</h4>
+          <h4 className="font-medium text-neutral-900 dark:text-white">Font Size: {readingSettings.fontSize}px</h4>
           <div className="flex space-x-2">
             <Button
               size="sm"
@@ -123,7 +123,7 @@ const SpeedControl: React.FC = () => {
       
       {/* Reading Mode */}
       <div className="space-y-2">
-        <h4 className="font-medium text-neutral-900">Reading Mode</h4>
+        <h4 className="font-medium text-neutral-900 dark:text-white">Reading Mode</h4>
         <div className="flex space-x-2">
           <Button
             size="sm"
@@ -145,7 +145,7 @@ const SpeedControl: React.FC = () => {
       {/* Chunk Size (only if chunk mode is selected) */}
       {readingSettings.mode === 'chunk' && (
         <div className="space-y-2">
-          <h4 className="font-medium text-neutral-900">Chunk Size: {readingSettings.chunkSize} words</h4>
+          <h4 className="font-medium text-neutral-900 dark:text-white">Chunk Size: {readingSettings.chunkSize} words</h4>
           <div className="flex space-x-2">
             {[2, 3, 4, 5].map((size) => (
               <Button

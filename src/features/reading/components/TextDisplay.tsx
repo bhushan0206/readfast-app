@@ -87,7 +87,7 @@ const TextDisplay: React.FC<TextDisplayProps> = ({ text, isReading, settings }) 
 
   return (
     <div 
-      className={`text-center p-8 select-none`}
+      className={`text-center p-8 select-none text-neutral-900 dark:text-neutral-100`}
       style={{ fontSize: `${settings.fontSize}px` }}
     >
       {isReading ? (

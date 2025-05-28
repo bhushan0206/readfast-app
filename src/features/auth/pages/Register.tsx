@@ -58,7 +58,7 @@ const Register: React.FC = () => {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-center text-neutral-900 mb-6">Create an account</h2>
+      <h2 className="text-2xl font-bold text-center text-neutral-900 dark:text-white mb-6">Create an account</h2>
       
       <form onSubmit={handleSubmit} className="space-y-6">
         <Input
@@ -114,9 +114,9 @@ const Register: React.FC = () => {
       </form>
 
       <div className="mt-6 text-center">
-        <p className="text-sm text-neutral-600">
+        <p className="text-sm text-neutral-600 dark:text-neutral-400">
           Already have an account?{' '}
-          <Link to="/login" className="font-medium text-primary-600 hover:text-primary-500">
+          <Link to="/login" className="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300">
             Sign in
           </Link>
         </p>

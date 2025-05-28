@@ -90,9 +90,9 @@ const ReadingSession: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto">
       <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold text-neutral-900">{text.title}</h1>
+        <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">{text.title}</h1>
         {!isReading && (
-          <p className="text-neutral-600 mt-2">
+          <p className="text-neutral-600 dark:text-neutral-400 mt-2">
             {textWords.length} words · Estimated time: {Math.ceil(textWords.length / readingSettings.speed)} minutes
           </p>
         )}
@@ -106,7 +106,7 @@ const ReadingSession: React.FC = () => {
             style={{ width: `${progress}%` }}
           ></div>
         </div>
-        <div className="flex justify-between mt-2 text-sm text-neutral-500">
+        <div className="flex justify-between mt-2 text-sm text-neutral-500 dark:text-neutral-400">
           <span>{Math.round(progress)}% complete</span>
           {isReading && (
             <span>
@@ -184,7 +184,7 @@ const ReadingSession: React.FC = () => {
       {/* Settings Panel */}
       {showSettings && (
         <div className="mt-8 card">
-          <h3 className="text-lg font-semibold mb-4">Reading Settings</h3>
+          <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">Reading Settings</h3>
           <SpeedControl />
         </div>
       )}

@@ -50,12 +50,14 @@ const AddCustomTextModal: React.FC<AddCustomTextModalProps> = ({ onClose, onSubm
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
-        <div className="flex justify-between items-center border-b border-neutral-200 p-4">
-          <h3 className="text-lg font-semibold text-neutral-900">Add Custom Text</h3>
+      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
+        <div className="flex justify-between items-center border-b border-neutral-200 dark:border-neutral-700 p-4">
+          <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">Add Custom Text</h3>
           <button 
-            className="text-neutral-500 hover:text-neutral-700"
+            className="text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
             onClick={onClose}
+            title="Close"
+            aria-label="Close"
           >
             <X size={20} />
           </button>
@@ -74,7 +76,7 @@ const AddCustomTextModal: React.FC<AddCustomTextModalProps> = ({ onClose, onSubm
             />
             
             <div className="space-y-1">
-              <label htmlFor="content" className="block text-sm font-medium text-neutral-700">
+              <label htmlFor="content" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
                 Content
               </label>
               <textarea
@@ -83,8 +85,11 @@ const AddCustomTextModal: React.FC<AddCustomTextModalProps> = ({ onClose, onSubm
                 placeholder="Paste or type the text content here..."
                 className={`
                   w-full rounded-lg px-3 py-2 resize-y
-                  border ${errors.content ? 'border-error-500' : 'border-neutral-300'} 
-                  focus:outline-none focus:ring-2 focus:ring-primary-100 focus:border-primary-500
+                  border ${errors.content ? 'border-error-500 dark:border-error-400' : 'border-neutral-300 dark:border-neutral-600'} 
+                  bg-white dark:bg-neutral-800
+                  text-neutral-900 dark:text-neutral-100
+                  placeholder-neutral-500 dark:placeholder-neutral-400
+                  focus:outline-none focus:ring-2 focus:ring-primary-100 dark:focus:ring-primary-900 focus:border-primary-500 dark:focus:border-primary-400
                   transition-all
                 `}
                 value={content}
@@ -92,16 +97,16 @@ const AddCustomTextModal: React.FC<AddCustomTextModalProps> = ({ onClose, onSubm
                 required
               />
               {errors.content && (
-                <p className="text-sm text-error-600">{errors.content}</p>
+                <p className="text-sm text-error-600 dark:text-error-400">{errors.content}</p>
               )}
-              <p className="text-xs text-neutral-500 mt-1">
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
                 {content.split(/\s+/).filter(Boolean).length} words
               </p>
             </div>
           </div>
         </form>
         
-        <div className="border-t border-neutral-200 p-4 flex justify-end space-x-3">
+        <div className="border-t border-neutral-200 dark:border-neutral-700 p-4 flex justify-end space-x-3">
           <Button
             variant="outline"
             onClick={onClose}

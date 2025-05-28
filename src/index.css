@@ -127,10 +127,9 @@ h1, h2, h3, h4, h5, h6 {
 
 .text-reveal {
   animation: fadeIn 0.3s ease-in-out;
-}
-
+}  
 .word-focus {
-  @apply bg-primary-100 px-1 rounded font-medium;
+  @apply bg-primary-100 dark:bg-primary-800 px-1 rounded font-medium text-primary-800 dark:text-primary-100;
 }
 
 .progress-bar {

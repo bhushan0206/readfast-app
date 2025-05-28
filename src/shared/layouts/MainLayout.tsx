@@ -37,13 +37,13 @@ const MainLayout: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Top Navigation */}
-      <header className="bg-white border-b border-neutral-200 w-full">
+      <header className="bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-700 w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <Link to="/" className="flex items-center">
                 <BookOpen className="h-8 w-8 text-primary-500" />
-                <span className="ml-2 text-xl font-bold text-neutral-900">ReadFast</span>
+                <span className="ml-2 text-xl font-bold text-neutral-900 dark:text-white">ReadFast</span>
               </Link>
             </div>
 
@@ -55,8 +55,8 @@ const MainLayout: React.FC = () => {
                   to={item.path}
                   className={`flex items-center py-2 px-3 rounded-md text-sm font-medium transition-colors ${
                     isActive(item.path)
-                      ? 'bg-primary-50 text-primary-700'
-                      : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900'
+                      ? 'bg-primary-50 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300'
+                      : 'text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-neutral-100'
                   }`}
                 >
                   <span className="mr-2">{item.icon}</span>
@@ -65,7 +65,7 @@ const MainLayout: React.FC = () => {
               ))}
               <button
                 onClick={handleLogout}
-                className="flex items-center py-2 px-3 rounded-md text-sm font-medium text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900 transition-colors"
+                className="flex items-center py-2 px-3 rounded-md text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
               >
                 <LogOut size={20} className="mr-2" />
                 Logout
@@ -76,7 +76,7 @@ const MainLayout: React.FC = () => {
             <div className="flex items-center md:hidden">
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="inline-flex items-center justify-center p-2 rounded-md text-neutral-400 hover:text-neutral-500 hover:bg-neutral-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+                className="inline-flex items-center justify-center p-2 rounded-md text-neutral-400 dark:text-neutral-500 hover:text-neutral-500 dark:hover:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
               >
                 {mobileMenuOpen ? (
                   <X className="block h-6 w-6" />
@@ -91,7 +91,7 @@ const MainLayout: React.FC = () => {
 
       {/* Mobile Navigation */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white border-b border-neutral-200">
+        <div className="md:hidden bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-700">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             {navItems.map((item) => (
               <Link
@@ -99,8 +99,8 @@ const MainLayout: React.FC = () => {
                 to={item.path}
                 className={`flex items-center py-2 px-3 rounded-md text-base font-medium ${
                   isActive(item.path)
-                    ? 'bg-primary-50 text-primary-700'
-                    : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900'
+                    ? 'bg-primary-50 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300'
+                    : 'text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-neutral-100'
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
@@ -113,7 +113,7 @@ const MainLayout: React.FC = () => {
                 setMobileMenuOpen(false);
                 handleLogout();
               }}
-              className="flex w-full items-center py-2 px-3 rounded-md text-base font-medium text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900"
+              className="flex w-full items-center py-2 px-3 rounded-md text-base font-medium text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-neutral-100"
             >
               <LogOut size={20} className="mr-3" />
               Logout
@@ -123,21 +123,21 @@ const MainLayout: React.FC = () => {
       )}
 
       {/* Main Content */}
-      <main className="flex-grow bg-neutral-50">
+      <main className="flex-grow bg-neutral-50 dark:bg-neutral-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <Outlet />
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-neutral-200 py-4">
+      <footer className="bg-white dark:bg-neutral-900 border-t border-neutral-200 dark:border-neutral-700 py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center">
               <BookOpen className="h-5 w-5 text-primary-500" />
-              <span className="ml-2 text-sm font-medium text-neutral-700">ReadFast</span>
+              <span className="ml-2 text-sm font-medium text-neutral-700 dark:text-neutral-300">ReadFast</span>
             </div>
-            <div className="mt-2 md:mt-0 text-sm text-neutral-500">
+            <div className="mt-2 md:mt-0 text-sm text-neutral-500 dark:text-neutral-400">
               &copy; {new Date().getFullYear()} ReadFast. All rights reserved.
             </div>
           </div>
