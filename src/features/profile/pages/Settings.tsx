@@ -106,7 +106,7 @@ const Settings: React.FC = () => {
                     className={`
                       p-3 rounded-lg border cursor-pointer transition-colors text-center
                       ${readingLevel === level 
-                        ? 'bg-primary-50 dark:bg-primary-900/50 border-primary-300 dark:border-primary-700 text-primary-800 dark:text-primary-100' 
+                        ? 'bg-primary-500 dark:bg-primary-600 border-primary-500 dark:border-primary-600 text-white dark:text-white' 
                         : 'bg-white dark:bg-neutral-800 border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600 text-neutral-700 dark:text-neutral-300'}
                     `}
                     onClick={() => setReadingLevel(level)}
@@ -130,7 +130,7 @@ const Settings: React.FC = () => {
                     className={`
                       p-3 rounded-lg border cursor-pointer transition-colors text-center
                       ${theme === themeOption 
-                        ? 'bg-primary-50 dark:bg-primary-900/50 border-primary-300 dark:border-primary-700 text-primary-800 dark:text-primary-100' 
+                        ? 'bg-primary-500 dark:bg-primary-600 border-primary-500 dark:border-primary-600 text-white dark:text-white' 
                         : 'bg-white dark:bg-neutral-800 border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600 text-neutral-700 dark:text-neutral-300'}
                     `}
                     onClick={() => setTheme(themeOption as 'light' | 'dark')}

@@ -44,47 +44,82 @@ const MainLayout: React.FC = () => {
             <div className="flex items-center">
               <Link to="/" className="flex items-center">
                 <BookOpen className="h-8 w-8 text-primary-500" />
-                <span className="ml-2 text-xl font-bold text-neutral-900 dark:text-white">ReadFast</span>
+                <span className="ml-2 text-xl font-bold text-neutral-900 dark:text-white hidden sm:inline">ReadFast</span>
+                <span className="ml-2 text-lg font-bold text-neutral-900 dark:text-white sm:hidden">RF</span>
               </Link>
             </div>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex space-x-4 items-center">
+            <nav className="hidden lg:flex space-x-2 xl:space-x-4 items-center">
               {navItems.map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`flex items-center py-2 px-3 rounded-md text-sm font-medium transition-colors ${
+                  className={`flex items-center py-2 px-2 xl:px-3 rounded-md text-sm font-medium transition-colors ${
                     isActive(item.path)
-                      ? 'bg-primary-50 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300'
+                      ? 'bg-primary-500 dark:bg-primary-600 text-white dark:text-white'
                       : 'text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-neutral-100'
                   }`}
                 >
-                  <span className="mr-2">{item.icon}</span>
-                  {item.label}
+                  <span className="mr-1 xl:mr-2">{item.icon}</span>
+                  <span className="hidden xl:inline">{item.label}</span>
                 </Link>
               ))}
-              <ThemeToggle />
+              <div className="border-l border-neutral-200 dark:border-neutral-700 pl-2 xl:pl-4 ml-2 xl:ml-4">
+                <ThemeToggle />
+              </div>
               <button
                 onClick={handleLogout}
-                className="flex items-center py-2 px-3 rounded-md text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+                className="flex items-center py-2 px-2 xl:px-3 rounded-md text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+                title="Logout"
               >
-                <LogOut size={20} className="mr-2" />
-                Logout
+                <LogOut size={20} className="mr-0 xl:mr-2" />
+                <span className="hidden xl:inline">Logout</span>
+              </button>
+            </nav>
+
+            {/* Tablet Navigation - Icons only */}
+            <nav className="hidden md:flex lg:hidden space-x-1 items-center">
+              {navItems.map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`flex items-center p-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive(item.path)
+                      ? 'bg-primary-500 dark:bg-primary-600 text-white dark:text-white'
+                      : 'text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-neutral-100'
+                  }`}
+                  title={item.label}
+                >
+                  {item.icon}
+                </Link>
+              ))}
+              <div className="border-l border-neutral-200 dark:border-neutral-700 pl-2 ml-2">
+                <ThemeToggle />
+              </div>
+              <button
+                onClick={handleLogout}
+                className="flex items-center p-2 rounded-md text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+                title="Logout"
+              >
+                <LogOut size={20} />
               </button>
             </nav>
 
             {/* Mobile menu button and theme toggle */}
-            <div className="flex items-center space-x-2 md:hidden">
-              <ThemeToggle />
+            <div className="flex items-center space-x-1 md:hidden">
+              <div className="flex items-center">
+                <ThemeToggle />
+              </div>
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="inline-flex items-center justify-center p-2 rounded-md text-neutral-400 dark:text-neutral-500 hover:text-neutral-500 dark:hover:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+                aria-label="Toggle menu"
               >
                 {mobileMenuOpen ? (
-                  <X className="block h-6 w-6" />
+                  <X className="block h-5 w-5" />
                 ) : (
-                  <Menu className="block h-6 w-6" />
+                  <Menu className="block h-5 w-5" />
                 )}
               </button>
             </div>
@@ -102,7 +137,7 @@ const MainLayout: React.FC = () => {
                 to={item.path}
                 className={`flex items-center py-2 px-3 rounded-md text-base font-medium ${
                   isActive(item.path)
-                    ? 'bg-primary-50 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300'
+                    ? 'bg-primary-500 dark:bg-primary-600 text-white dark:text-white'
                     : 'text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-neutral-100'
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
