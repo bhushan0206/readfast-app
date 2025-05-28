@@ -7,6 +7,7 @@ import Button from '../../../shared/components/Button';
 import RecentActivity from '../components/RecentActivity';
 import ReadingStats from '../components/ReadingStats';
 import GoalProgress from '../components/GoalProgress';
+import AnalyticsSummary from '../components/AnalyticsSummary';
 import ReadingAssistant from '../../../shared/components/ReadingAssistant';
 
 const Dashboard: React.FC = () => {
@@ -149,8 +150,9 @@ const Dashboard: React.FC = () => {
         <div className="lg:col-span-2">
           <ReadingStats stats={stats} sessions={sessions} />
         </div>
-        <div>
+        <div className="space-y-6">
           <GoalProgress stats={stats} />
+          <AnalyticsSummary />
         </div>
       </div>
       

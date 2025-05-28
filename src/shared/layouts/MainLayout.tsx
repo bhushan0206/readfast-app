@@ -6,6 +6,7 @@ import {
   BookOpen, 
   Library, 
   LineChart, 
+  BarChart3,
   Award, 
   Settings, 
   LogOut,
@@ -28,6 +29,7 @@ const MainLayout: React.FC = () => {
   const navItems = [
     { path: '/', label: 'Dashboard', icon: <LineChart size={20} /> },
     { path: '/library', label: 'Library', icon: <Library size={20} /> },
+    { path: '/analytics', label: 'Analytics', icon: <BarChart3 size={20} /> },
     { path: '/achievements', label: 'Achievements', icon: <Award size={20} /> },
     { path: '/profile', label: 'Profile', icon: <User size={20} /> },
     { path: '/settings', label: 'Settings', icon: <Settings size={20} /> },
