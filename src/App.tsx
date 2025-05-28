@@ -4,6 +4,7 @@ import { useAuthStore } from './store/authStore';
 import { useThemeStore } from './store/themeStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { useNavigationFix } from './hooks/useNavigationFix';
 
 // Layouts
 import MainLayout from './shared/layouts/MainLayout';
@@ -29,6 +30,9 @@ import ErrorBoundary from './shared/components/ErrorBoundary';
 function App() {
   const { initialized } = useAuthStore();
   const { theme } = useThemeStore();
+  
+  // Fix mobile navigation issues
+  useNavigationFix();
 
   React.useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
@@ -82,7 +86,7 @@ function App() {
               
               {/* Fallback routes */}
               <Route path="/404" element={<NotFound />} />
-              <Route path="*" element={<Navigate to="/404" replace />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </motion.div>
         </AnimatePresence>
