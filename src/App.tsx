@@ -22,6 +22,9 @@ import Settings from './features/profile/pages/Settings';
 import AdminPage from './features/admin/pages/AdminPage';
 import Achievements from './features/gamification/pages/Achievements';
 import Analytics from './features/analytics/pages/Analytics';
+import VocabularyBuilder from './features/vocabulary/pages/VocabularyBuilder';
+import VocabularyReview from './features/vocabulary/pages/VocabularyReview';
+import VocabularyDemo from './features/vocabulary/pages/VocabularyDemo';
 import NotFound from './shared/pages/NotFound';
 
 // Components
@@ -80,6 +83,9 @@ function App() {
                 <Route path="/read/:id" element={<ReadingSession />} />
                 <Route path="/library" element={<Library />} />
                 <Route path="/analytics" element={<Analytics />} />
+                <Route path="/vocabulary" element={<VocabularyBuilder />} />
+                <Route path="/vocabulary/review" element={<VocabularyReview />} />
+                <Route path="/vocabulary/demo" element={<VocabularyDemo />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/achievements" element={<Achievements />} />
