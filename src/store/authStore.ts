@@ -79,6 +79,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       set({ loading: true });
       await signInWithProvider(provider);
+      // Note: The actual user session will be handled by the auth callback
+      // where we'll check for account linking
     } catch (error: any) {
       set({ loading: false });
       toast.error(error.message || `Failed to login with ${provider}`);
@@ -93,7 +95,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       // Validate input before making the request
       if (!email || !password) {
         set({ loading: false });
-        toast.error('Email and password are required');
         throw new Error('Email and password are required');
       }
 
@@ -108,10 +109,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       });
 
       if (error) {
-        // Log the full error object for debugging
-        console.error("Supabase signup error:", error);
         set({ loading: false });
-        toast.error(error.message || 'Failed to register');
         throw error;
       }
 
@@ -138,7 +136,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       toast.success('Registration successful');
     } catch (error: any) {
       set({ loading: false });
-      // Log the error for debugging
       console.error("Registration failed:", error);
       toast.error(error.message || 'Failed to register');
       throw error;

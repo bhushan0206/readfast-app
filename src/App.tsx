@@ -13,6 +13,7 @@ import AuthLayout from './shared/layouts/AuthLayout';
 import Dashboard from './features/dashboard/pages/Dashboard';
 import Login from './features/auth/pages/Login';
 import Register from './features/auth/pages/Register';
+import AuthCallback from './features/auth/pages/AuthCallback';
 import ReadingSession from './features/reading/pages/ReadingSession';
 import Library from './features/library/pages/Library';
 import Profile from './features/profile/pages/Profile';
@@ -64,6 +65,7 @@ function App() {
               <Route element={<AuthLayout />}>
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/auth/callback" element={<AuthCallback />} />
               </Route>
               
               {/* Protected Routes */}

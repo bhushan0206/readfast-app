@@ -12,22 +12,37 @@ export interface Database {
       profiles: {
         Row: {
           id: string
+          email: string | null
           full_name: string | null
           avatar_url: string | null
+          reading_level: string | null
+          reading_speed: number | null
+          social_id: string | null
+          oauth_provider: string | null
           created_at: string
           updated_at: string
         }
         Insert: {
           id: string
+          email?: string | null
           full_name?: string | null
           avatar_url?: string | null
+          reading_level?: string | null
+          reading_speed?: number | null
+          social_id?: string | null
+          oauth_provider?: string | null
           created_at?: string
           updated_at?: string
         }
         Update: {
           id?: string
+          email?: string | null
           full_name?: string | null
           avatar_url?: string | null
+          reading_level?: string | null
+          reading_speed?: number | null
+          social_id?: string | null
+          oauth_provider?: string | null
           created_at?: string
           updated_at?: string
         }

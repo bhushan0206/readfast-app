@@ -1,0 +1,17 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="16" cy="16" r="16" fill="#3b82f6"/>
+  
+  <!-- Book pages -->
+  <rect x="8" y="8" width="16" height="16" rx="2" fill="white"/>
+  <rect x="10" y="8" width="12" height="16" rx="1" fill="#f8fafc"/>
+  
+  <!-- Reading lines with speed effect -->
+  <rect x="12" y="12" width="8" height="1" fill="#3b82f6" opacity="0.8"/>
+  <rect x="12" y="14" width="6" height="1" fill="#3b82f6" opacity="0.6"/>
+  <rect x="12" y="16" width="7" height="1" fill="#3b82f6" opacity="0.4"/>
+  <rect x="12" y="18" width="5" height="1" fill="#3b82f6" opacity="0.3"/>
+  
+  <!-- Speed indicator (arrow) -->
+  <path d="M22 11 L26 13 L22 15 Z" fill="#10b981" opacity="0.9"/>
+</svg>
