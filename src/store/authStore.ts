@@ -5,6 +5,7 @@ import type { Provider } from '@supabase/supabase-js';
 import { toast } from 'sonner';
 import { AuthSecurity, SessionManager } from '../utils/securityMiddleware';
 import { logger, LogCategory } from '../utils/logger';
+import { handleProductionOAuth } from '../utils/oauth-fix';
 
 interface AuthState {
   user: any | null;
@@ -38,6 +39,19 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       }
       
       set({ loading: true });
+
+      // Try production OAuth fix first
+      const productionSession = await handleProductionOAuth();
+      if (productionSession?.user) {
+        console.log('✅ Production OAuth session found');
+        set({
+          user: productionSession.user,
+          profile: null,
+          initialized: true,
+          loading: false
+        });
+        return;
+      }
 
       // In production, wait for auth state to settle after OAuth redirect
       if (typeof window !== 'undefined' && window.location.href.includes('/auth/callback')) {
