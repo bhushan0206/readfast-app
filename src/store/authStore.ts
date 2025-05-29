@@ -39,6 +39,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       
       set({ loading: true });
 
+      // In production, wait for auth state to settle after OAuth redirect
+      if (typeof window !== 'undefined' && window.location.href.includes('/auth/callback')) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+
       // Add timeout to prevent hanging
       const timeoutPromise = new Promise((_, reject) => 
         setTimeout(() => reject(new Error('Auth initialization timeout')), 10000)
@@ -90,6 +95,39 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         console.log('✅ Auth initialized successfully');
       } else {
         console.log('ℹ️ No session found');
+        
+        // In production, check for auth state in URL hash (OAuth callback)
+        if (typeof window !== 'undefined') {
+          const hashParams = new URLSearchParams(window.location.hash.substring(1));
+          const accessToken = hashParams.get('access_token');
+          const refreshToken = hashParams.get('refresh_token');
+          
+          if (accessToken && refreshToken) {
+            console.log('🔄 Found tokens in URL, setting session...');
+            try {
+              const { data: { session: newSession }, error: sessionError } = await supabase.auth.setSession({
+                access_token: accessToken,
+                refresh_token: refreshToken
+              });
+              
+              if (sessionError) {
+                console.error('❌ Failed to set session from URL tokens:', sessionError);
+              } else if (newSession?.user) {
+                console.log('✅ Session set from URL tokens');
+                set({
+                  user: newSession.user,
+                  profile: null,
+                  initialized: true,
+                  loading: false
+                });
+                return;
+              }
+            } catch (tokenError) {
+              console.error('❌ Error processing URL tokens:', tokenError);
+            }
+          }
+        }
+        
         set({ user: null, profile: null, initialized: true, loading: false });
       }
     } catch (error) {
@@ -282,7 +320,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/login`
+          redirectTo: `${window.location.origin}/auth/callback`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'select_account',
+          }
         }
       });
 
