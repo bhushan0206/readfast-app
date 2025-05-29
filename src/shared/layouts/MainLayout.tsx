@@ -64,6 +64,7 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                       ? 'bg-primary-500 dark:bg-primary-600 text-white dark:text-white'
                       : 'text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-neutral-100'
                   }`}
+                  title={item.label} // Tooltip
                 >
                   <span className="mr-1 xl:mr-2">{item.icon}</span>
                   <span className="hidden xl:inline">{item.label}</span>
@@ -75,7 +76,7 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               <button
                 onClick={handleLogout}
                 className="flex items-center py-2 px-2 xl:px-3 rounded-md text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
-                title="Logout"
+                title="Logout" // Tooltip
               >
                 <LogOut size={20} className="mr-0 xl:mr-2" />
                 <span className="hidden xl:inline">Logout</span>
@@ -93,7 +94,7 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                       ? 'bg-primary-500 dark:bg-primary-600 text-white dark:text-white'
                       : 'text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-neutral-100'
                   }`}
-                  title={item.label}
+                  title={item.label} // Tooltip
                 >
                   {item.icon}
                 </Link>
@@ -104,7 +105,7 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               <button
                 onClick={handleLogout}
                 className="flex items-center p-2 rounded-md text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
-                title="Logout"
+                title="Logout" // Tooltip
               >
                 <LogOut size={20} />
               </button>

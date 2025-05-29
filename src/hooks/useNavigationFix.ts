@@ -11,7 +11,10 @@ export const useNavigationFix = () => {
     // Handle browser back/forward navigation on mobile
     const handlePopState = (event: PopStateEvent) => {
       // Check if we're on a valid route
-      const validRoutes = ['/', '/library', '/profile', '/settings', '/achievements', '/login', '/register'];
+      const validRoutes = [
+        '/', '/library', '/profile', '/settings', '/achievements', '/login', '/register',
+        '/analytics', '/vocabulary', '/vocabulary/review', '/vocabulary/demo'
+      ];
       const isDynamicRoute = location.pathname.startsWith('/read/') || location.pathname.startsWith('/auth/');
       
       if (!validRoutes.includes(location.pathname) && !isDynamicRoute) {

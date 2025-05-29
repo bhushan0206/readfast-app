@@ -119,14 +119,11 @@ function App() {
             className="min-h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors"
           >
             <Routes>
-              {/* Debug Route */}
-              <Route path="/debug" element={<div>Debug Route Working!</div>} />
-              
               {/* Auth Routes */}
               <Route path="/login" element={<AuthLayout><Login /></AuthLayout>} />
               <Route path="/register" element={<AuthLayout><Register /></AuthLayout>} />
               
-              {/* Main App Routes - All use the same pattern */}
+              {/* Main App Routes */}
               <Route path="/" element={
                 <ProtectedRoute>
                   <MainLayout>
