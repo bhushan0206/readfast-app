@@ -35,8 +35,12 @@ export const SECURITY_CONFIG = {
   // CORS settings
   CORS: {
     ALLOWED_ORIGINS: [
-      'http://localhost:3000',
-      'http://localhost:5173',
+      // Only include localhost in development
+      ...(process.env.NODE_ENV === 'development' ? [
+        'http://localhost:3000',
+        'http://localhost:5173',
+      ] : []),
+      // Production URL
       process.env.VITE_APP_URL,
     ].filter(Boolean),
   },
