@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuthStore } from '../../store/authStore';
+import { useAuthStore } from '../../stores/authStore';
 import { BookOpen } from 'lucide-react';
 import ThemeToggle from '../components/ThemeToggle';
 

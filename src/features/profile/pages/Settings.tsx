@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Save, User } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useAuthStore } from '../../../store/authStore';
+import { useAuthStore } from '../../../stores/authStore';
 import { useReadingStore } from '../../../store/readingStore';
 import { useThemeStore } from '../../../store/themeStore';
 import Button from '../../../shared/components/Button';

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuthStore } from '../../../store/authStore';
+import { useAuthStore } from '../../../stores/authStore';
 import { getReadingSessions, getUserReadingStats } from '../../../services/supabase';
 import { BookOpen, TrendingUp, Clock, Award } from 'lucide-react';
 import Button from '../../../shared/components/Button';
