@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Edit, User } from 'lucide-react';
-import { useAuthStore } from '../../../store/authStore';
+import { useAuthStore } from '../../../stores/authStore';
 import { getUserReadingStats } from '../../../services/supabase';
 import Button from '../../../shared/components/Button';
 import ReadingStats from '../../dashboard/components/ReadingStats';
@@ -11,14 +11,26 @@ const Profile: React.FC = () => {
   const { user, profile } = useAuthStore();
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   useEffect(() => {
     const fetchStats = async () => {
-      if (!user) return;
+      console.log('🔍 Profile: fetchStats called', { userId: user?.id });
+      
+      if (!user?.id) {
+        console.log('🔍 Profile: No user ID, setting loading to false');
+        setLoading(false);
+        return;
+      }
       
       try {
         setLoading(true);
+        setError(null);
+        console.log('🔄 Profile: Fetching stats for user:', user.id);
+        
         const statsData = await getUserReadingStats(user.id);
+        console.log('✅ Profile: Stats fetched:', statsData);
+        
         setStats(statsData || {
           avg_wpm: 0,
           max_wpm: 0,
@@ -27,14 +39,34 @@ const Profile: React.FC = () => {
           sessions_completed: 0
         });
       } catch (error) {
-        console.error('Error fetching stats:', error);
+        console.error('❌ Profile: Error fetching stats:', error);
+        setError('Failed to load profile data');
+        setStats({
+          avg_wpm: 0,
+          max_wpm: 0,
+          total_words_read: 0,
+          total_time_spent: 0,
+          sessions_completed: 0
+        });
       } finally {
         setLoading(false);
+        console.log('✅ Profile: Loading complete');
       }
     };
     
+    // Add a timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      if (loading) {
+        console.log('⚠️ Profile: Timeout reached, forcing loading to false');
+        setLoading(false);
+        setError('Profile loading timed out');
+      }
+    }, 10000); // 10 second timeout
+    
     fetchStats();
-  }, [user]);
+    
+    return () => clearTimeout(timeoutId);
+  }, [user?.id]);
   
   if (loading) {
     return (

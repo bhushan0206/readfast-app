@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { BookOpen, Upload, Search, Plus, Wand2 } from 'lucide-react';
-import { useAuthStore } from '../../../store/authStore';
+import { BookOpen, Search, Plus, Wand2 } from 'lucide-react';
+import { useAuthStore } from '../../../stores/authStore';
 import { getTexts, saveCustomText } from '../../../services/supabase';
 import Button from '../../../shared/components/Button';
 import Input from '../../../shared/components/Input';
@@ -68,7 +68,7 @@ const Library: React.FC = () => {
   };
 
   const handleAddCustomText = async (title: string, content: string) => {
-    if (!user) {
+    if (!user?.id) {
       setError('You must be logged in to add custom texts');
       return;
     }
@@ -84,7 +84,7 @@ const Library: React.FC = () => {
   };
 
   const handleGenerateText = async (title: string, content: string) => {
-    if (!user) {
+    if (!user?.id) {
       setError('You must be logged in to generate texts');
       return;
     }
@@ -232,9 +232,8 @@ const Library: React.FC = () => {
       
       {/* Reading Assistant */}
       <ReadingAssistant 
-        onRecommendation={(topic) => {
+        onRecommendation={() => {
           setShowGenerateModal(true);
-          // You could pre-fill the topic in the generate modal
         }}
       />
     </div>
