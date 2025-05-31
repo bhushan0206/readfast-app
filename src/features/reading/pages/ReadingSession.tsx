@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Play, Pause, SkipForward, SkipBack, Settings, RotateCcw } from 'lucide-react';
 import { getTextById } from '../../../services/supabase';
 import { useReadingStore } from '../../../store/readingStore';
+import { useAuthStore } from '../../../stores/authStore';
 import Button from '../../../shared/components/Button';
 import ComprehensionQuiz from '../components/ComprehensionQuiz';
 import SpeedControl from '../components/SpeedControl';
@@ -14,6 +15,7 @@ import { errorMonitor } from '../../../utils/errorMonitoring';
 const ReadingSession: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuthStore();
   
   const [showSettings, setShowSettings] = useState(false);
   const [showComprehension, setShowComprehension] = useState(false);
@@ -82,7 +84,7 @@ const ReadingSession: React.FC = () => {
         wordsRead: Math.floor(textWords.length * (progress / 100))
       });
       
-      await stopReading(textWords.length);
+      await stopReading(textWords.length, user?.id);
       setShowComprehension(true);
     } catch (error) {
       errorMonitor.recordError(error as Error, {
@@ -225,12 +227,15 @@ const ReadingSession: React.FC = () => {
           )}
         </div>
         
-        <Button
-          variant="danger"
-          onClick={handleStopReading}
-        >
-          Finish
-        </Button>
+        <div className="flex space-x-2">
+          <Button
+            variant="danger"
+            onClick={handleStopReading}
+            className="bg-red-600 hover:bg-red-700 text-white font-medium px-6 py-2"
+          >
+            Finish Reading
+          </Button>
+        </div>
       </div>
       
       {/* Settings Panel */}

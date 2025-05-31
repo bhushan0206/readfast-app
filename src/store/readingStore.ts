@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { create } from 'zustand';
 import { saveReadingSession, updateReadingStats } from '../services/supabase';
-import { useAuthStore } from './authStore';
 import { useAchievementStore } from './achievementStore';
 
 interface ReadingState {
@@ -28,7 +27,7 @@ interface ReadingState {
   startReading: (textId: string) => void;
   pauseReading: () => void;
   resumeReading: () => void;
-  stopReading: (completedWords?: number) => Promise<void>;
+  stopReading: (totalWords: number, userId?: string) => Promise<void>;
   restartReading: () => void;
   updateProgress: (index: number, totalWords: number) => void;
   updateSettings: (settings: Partial<ReadingState['readingSettings']>) => void;
@@ -99,12 +98,10 @@ export const useReadingStore = create<ReadingState>((set, get) => ({
     });
   },
 
-  stopReading: async (completedWords) => {
-    const { currentSession, readingSettings } = get();
-    const { user } = useAuthStore.getState();
-    const { checkAchievements } = useAchievementStore.getState();
+  stopReading: async (totalWords: number, userId?: string) => {
+    const { currentSession } = get();
     
-    if (!user || !currentSession.textId || !currentSession.startTime) {
+    if (!userId || !currentSession.textId || !currentSession.startTime) {
       set({ isReading: false });
       return;
     }
@@ -113,7 +110,7 @@ export const useReadingStore = create<ReadingState>((set, get) => ({
     const timeSpentMs = endTime.getTime() - currentSession.startTime.getTime();
     const timeSpentMinutes = timeSpentMs / 60000; // Convert to minutes
     
-    const wordsRead = completedWords || 0;
+    const wordsRead = totalWords || 0;
     const wpm = timeSpentMinutes > 0 ? Math.round(wordsRead / timeSpentMinutes) : 0;
     
     // Update state
@@ -130,7 +127,7 @@ export const useReadingStore = create<ReadingState>((set, get) => ({
     try {
       // Save reading session
       const sessionData = {
-        user_id: user.id,
+        user_id: userId,
         text_id: currentSession.textId,
         start_time: currentSession.startTime.toISOString(),
         end_time: endTime.toISOString(),
@@ -164,17 +161,18 @@ export const useReadingStore = create<ReadingState>((set, get) => ({
         statsUpdate.avg_comprehension = Math.round(currentSession.comprehensionScore || 0); // Ensure integer
       }
       
-      await updateReadingStats(user.id, statsUpdate);
+      await updateReadingStats(userId, statsUpdate);
       
       // Get the current cumulative stats from database for achievement checking
       try {
         const { getUserReadingStats } = await import('../services/supabase');
-        const currentStats = await getUserReadingStats(user.id);
+        const currentStats = await getUserReadingStats(userId);
         
         if (currentStats) {
           console.log('Current cumulative stats from DB:', currentStats);
           
-          // Pass cumulative stats to achievement checker
+          // Get achievement store and check achievements
+          const { checkAchievements } = useAchievementStore.getState();
           await checkAchievements({
             total_words_read: currentStats.total_words_read || 0,
             sessions_completed: currentStats.sessions_completed || 0,
@@ -207,15 +205,6 @@ export const useReadingStore = create<ReadingState>((set, get) => ({
         ...settings,
       }
     });
-
-    // Also update user profile if logged in
-    const { user, updateProfile } = useAuthStore.getState();
-    if (user && settings.speed) {
-      updateProfile({ reading_speed: settings.speed }).catch(console.error);
-    }
-    if (user && settings.fontSize) {
-      updateProfile({ font_size: settings.fontSize }).catch(console.error);
-    }
   },
 
   setComprehensionScore: (score) => {

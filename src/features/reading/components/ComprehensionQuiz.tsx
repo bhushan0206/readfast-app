@@ -3,7 +3,7 @@ import { CheckCircle, XCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useReadingStore } from '../../../store/readingStore';
 import { useAchievementStore } from '../../../store/achievementStore';
-import { useAuthStore } from '../../../store/authStore';
+import { useAuthStore } from '../../../stores/authStore';
 import { getUserReadingStats } from '../../../services/supabase';
 import Button from '../../../shared/components/Button';
 

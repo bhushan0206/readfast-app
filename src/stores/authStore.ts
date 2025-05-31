@@ -109,15 +109,26 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   signOut: async () => {
     try {
       set({ loading: true });
+      console.log('🔄 Auth store: Starting sign out...');
       
-      await authService.signOut();
+      // Try to sign out, but don't fail if there's no session
+      try {
+        await authService.signOut();
+        console.log('✅ Auth service sign out successful');
+      } catch (signOutError: any) {
+        console.warn('⚠️ Auth service sign out failed, clearing state anyway:', signOutError.message);
+        // Continue to clear state even if signOut fails
+      }
       
       set({ user: null, profile: null, loading: false });
       toast.success('Signed out successfully!');
+      console.log('✅ Auth store: Sign out complete');
     } catch (error: any) {
-      set({ loading: false });
-      toast.error(error.message || 'Failed to sign out');
-      throw error;
+      console.error('❌ Auth store: Sign out error:', error);
+      // Always clear state even on error
+      set({ user: null, profile: null, loading: false });
+      toast.error('Signed out (with warnings)');
+      // Don't re-throw the error to prevent UI issues
     }
   },
 
