@@ -34,34 +34,130 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   signUp: async (email: string, password: string, fullName: string) => {
     try {
-      set({ loading: true });
-      console.log('📝 Attempting to sign up:', email);
-      
-      const { user } = await authService.signUp(email, password, fullName);
-      console.log('Sign up result:', user ? `Success for ${user.email}` : 'No user returned');
-      
-      if (user) {
-        // Create profile for new user
-        console.log('👤 Creating user profile...');
-        const profile = await ensureUserProfile(user);
+      set({ loading: true, error: null });
+      console.log('🔐 Starting sign up process...');
+
+      // First, check if user already exists by attempting to sign in
+      console.log('🔍 Checking if user already exists...');
+      const { data: existingUser, error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password: 'dummy-password-to-check-existence'
+      });
+
+      // If sign in succeeds or fails with invalid credentials, user exists
+      if (existingUser?.user || 
+          (signInError && signInError.message.includes('Invalid login credentials'))) {
+        console.log('❌ User already exists');
+        throw new Error('An account with this email already exists. Please sign in instead.');
+      }
+
+      // Also check the profiles table directly
+      const { data: profileCheck } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('email', email)
+        .maybeSingle();
+
+      if (profileCheck) {
+        console.log('❌ Profile already exists for this email');
+        throw new Error('An account with this email already exists. Please sign in instead.');
+      }
+
+      console.log('✅ Email appears to be available, proceeding with registration...');
+
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+          },
+        },
+      });
+
+      if (error) {
+        console.error('❌ Supabase auth error:', error);
         
-        if (profile) {
-          console.log('✅ Profile created successfully');
+        // Handle specific Supabase error codes
+        if (error.message.includes('User already registered') || 
+            error.message.includes('already been registered') ||
+            error.message.includes('email already exists')) {
+          throw new Error('An account with this email already exists. Please sign in instead.');
+        } else if (error.message.includes('Invalid email')) {
+          throw new Error('Please enter a valid email address.');
+        } else if (error.message.includes('Password should be at least')) {
+          throw new Error('Password must be at least 6 characters long.');
+        } else if (error.message.includes('signup is disabled')) {
+          throw new Error('New registrations are currently disabled. Please contact support.');
         } else {
-          console.warn('⚠️ Profile creation failed');
+          throw new Error(error.message || 'Registration failed. Please try again.');
+        }
+      }
+
+      if (!data.user) {
+        throw new Error('Failed to create user account. Please try again.');
+      }
+
+      console.log('✅ User created:', data.user.id);
+
+      // Only try to create profile if user was successfully created and confirmed
+      if (data.user && data.session) {
+        // User is immediately signed in (email confirmation disabled)
+        try {
+          await ensureUserProfile(data.user, fullName);
+          console.log('✅ Profile created/updated successfully');
+        } catch (profileError) {
+          console.warn('⚠️ Profile creation failed:', profileError);
+          // Check if it's a duplicate user issue
+          if (profileError instanceof Error && 
+              (profileError.message.includes('row-level security') || 
+               profileError.message.includes('already exists'))) {
+            throw new Error('An account with this email already exists. Please sign in instead.');
+          }
+          // Don't throw here - user account was created successfully
+          // Profile can be created later when they sign in
+        }
+
+        // Get the updated user data
+        const { data: { user: updatedUser } } = await supabase.auth.getUser();
+        const profile = await getUserProfile(updatedUser?.id);
+
+        set({ 
+          user: updatedUser, 
+          profile,
+          initialized: true,
+          loading: false 
+        });
+      } else if (data.user && !data.user.email_confirmed_at) {
+        // Email confirmation required - this is likely a duplicate
+        console.log('📧 Email confirmation required');
+        
+        // Check if this user was created just now or already existed
+        const createdAt = new Date(data.user.created_at);
+        const now = new Date();
+        const timeDiff = now.getTime() - createdAt.getTime();
+        
+        // If user was created more than 10 seconds ago, it's likely a duplicate
+        if (timeDiff > 10000) {
+          console.log('⚠️ User appears to be a duplicate (created more than 10s ago)');
+          throw new Error('An account with this email already exists. Please check your email for a confirmation link or sign in instead.');
         }
         
-        set({ user, profile, loading: false });
-        toast.success('Account created successfully! Please check your email to verify your account.');
-        console.log('✅ Sign up complete');
-      } else {
-        console.warn('⚠️ Sign up succeeded but no user returned');
-        set({ loading: false });
+        set({ 
+          user: null, 
+          profile: null,
+          initialized: true,
+          loading: false 
+        });
       }
-    } catch (error: any) {
-      console.error('❌ Sign up error:', error);
-      set({ loading: false });
-      toast.error(error.message || 'Failed to create account');
+
+      console.log('✅ Sign up complete');
+    } catch (error) {
+      console.error('❌ Sign up failed:', error);
+      set({ 
+        error: error instanceof Error ? error.message : 'Sign up failed',
+        loading: false 
+      });
       throw error;
     }
   },

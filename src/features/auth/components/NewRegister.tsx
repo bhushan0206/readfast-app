@@ -64,12 +64,50 @@ const NewRegister: React.FC = () => {
       console.log('Email:', email);
       console.log('Full Name:', fullName);
       
-      await signUp(email, password, fullName);
+      // Clear any previous errors
+      setErrors({});
       
-      console.log('✅ Registration completed successfully');
+      const result = await signUp(email, password, fullName);
+      
+      // Check if email confirmation is required
+      const { user } = useAuthStore.getState();
+      if (!user) {
+        console.log('📧 Please check your email to confirm your account');
+        setErrors({ 
+          submit: 'Account created! Please check your email to confirm your account before signing in.' 
+        });
+      } else {
+        console.log('✅ Registration completed successfully');
+      }
     } catch (error: unknown) {
       console.error('❌ Registration error:', error);
-      setErrors({ submit: error instanceof Error ? error.message : 'An unexpected error occurred' });
+      
+      let errorMessage = 'Registration failed. Please try again.';
+      
+      if (error instanceof Error) {
+        const message = error.message.toLowerCase();
+        
+        // Handle specific error cases
+        if (message.includes('user already registered') || 
+            message.includes('email already exists') ||
+            message.includes('already been registered') ||
+            message.includes('account with this email already exists') ||
+            message.includes('check your email for a confirmation link')) {
+          errorMessage = error.message; // Use the exact error message
+        } else if (message.includes('invalid email')) {
+          errorMessage = 'Please enter a valid email address.';
+        } else if (message.includes('password')) {
+          errorMessage = 'Password must be at least 6 characters long.';
+        } else if (message.includes('network') || message.includes('fetch')) {
+          errorMessage = 'Network error. Please check your connection and try again.';
+        } else if (message.includes('row-level security') || message.includes('policy')) {
+          errorMessage = 'There was an issue creating your profile. This email may already be registered.';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
+      setErrors({ submit: errorMessage });
     }
   };
 

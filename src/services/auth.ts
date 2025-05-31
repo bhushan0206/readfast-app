@@ -150,26 +150,73 @@ export const profileService = {
 // Utility function to ensure user profile exists
 export async function ensureUserProfile(user: any) {
   try {
-    // Validate user has required fields
-    if (!user?.id || !user?.email) {
-      console.error('Invalid user object:', user);
-      return null;
+    console.log('🔍 Checking if profile exists for user:', user.id);
+    
+    // First try to get existing profile
+    const { data: existingProfile, error: fetchError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .maybeSingle();
+
+    // If profile exists, return it
+    if (existingProfile) {
+      console.log('✅ Profile already exists');
+      return existingProfile;
     }
 
-    let profile = await profileService.getProfile(user.id);
-    
-    if (!profile) {
-      // Create new profile
-      profile = await profileService.upsertProfile(user.id, {
-        email: user.email,
-        full_name: user.user_metadata?.full_name || user.user_metadata?.name || null,
-        avatar_url: user.user_metadata?.avatar_url || null,
-      });
+    // If there was a 406 error, it might indicate user already exists
+    if (fetchError && fetchError.message.includes('406')) {
+      console.warn('⚠️ Profile fetch returned 406 - user may already exist');
+      throw new Error('An account with this email already exists. Please sign in instead.');
     }
-    
-    return profile;
+
+    // If there was an error other than "not found", log it but continue
+    if (fetchError && !fetchError.message.includes('No rows')) {
+      console.warn('⚠️ Error fetching profile:', fetchError);
+    }
+
+    // Create new profile
+    console.log('📝 Creating new profile...');
+    const newProfile = {
+      id: user.id,
+      full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+      email: user.email!,
+      avatar_url: user.user_metadata?.avatar_url || null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
+    const { data: createdProfile, error: createError } = await supabase
+      .from('profiles')
+      .insert([newProfile])
+      .select()
+      .single();
+
+    if (createError) {
+      console.error('❌ Error creating profile:', createError);
+      
+      // Handle specific RLS errors
+      if (createError.message.includes('row-level security') || createError.code === '42501') {
+        throw new Error('An account with this email already exists. Please sign in instead.');
+      } else if (createError.message.includes('duplicate key') || createError.code === '23505') {
+        console.log('⚠️ Profile already exists (race condition), fetching existing...');
+        // Try to fetch the existing profile again
+        const { data: retryProfile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+        return retryProfile;
+      } else {
+        throw new Error(`Failed to create user profile: ${createError.message}`);
+      }
+    }
+
+    console.log('✅ Profile created successfully');
+    return createdProfile;
   } catch (error) {
-    console.error('Error ensuring user profile:', error);
-    return null;
+    console.error('❌ Error ensuring user profile:', error);
+    throw error;
   }
-}
+};
