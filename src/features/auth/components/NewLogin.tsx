@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, Zap, BookOpen, Sparkles, Star } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Zap, BookOpen, Sparkles, Star, Brain, Target, TrendingUp, Lightbulb, Clock, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../../../stores/authStore';
 
@@ -94,43 +94,261 @@ const NewLogin: React.FC = () => {
         />
         
         {/* Floating reading elements */}
-        {[...Array(8)].map((_, i) => (
-          <motion.div
-            key={i}
-            animate={{
-              y: [0, -20, 0],
-              opacity: [0.3, 0.7, 0.3],
-              rotate: [0, 360],
-            }}
-            transition={{
-              duration: 4 + i,
-              repeat: Infinity,
-              delay: i * 0.8,
-            }}
-            className="absolute"
-            style={{
-              left: `${15 + (i * 10)}%`,
-              top: `${20 + (i * 8)}%`,
-            }}
-          >
-            {i % 3 === 0 ? (
-              <BookOpen size={12 + (i % 3) * 4} className="text-blue-400/40" />
-            ) : i % 3 === 1 ? (
-              <Zap size={10 + (i % 3) * 4} className="text-purple-400/40" />
-            ) : (
-              <Star size={8 + (i % 3) * 4} className="text-indigo-400/40" />
-            )}
-          </motion.div>
-        ))}
+        {[...Array(12)].map((_, i) => {
+          const icons = [BookOpen, Zap, Star, Brain, Target, TrendingUp];
+          const IconComponent = icons[i % icons.length];
+          
+          return (
+            <motion.div
+              key={i}
+              animate={{
+                y: [0, -20, 0],
+                opacity: [0.3, 0.7, 0.3],
+                rotate: [0, 360],
+              }}
+              transition={{
+                duration: 4 + i,
+                repeat: Infinity,
+                delay: i * 0.8,
+              }}
+              className="absolute"
+              style={{
+                left: `${10 + (i * 7)}%`,
+                top: `${15 + (i * 6)}%`,
+              }}
+            >
+              <IconComponent size={10 + (i % 4) * 3} className={`${
+                i % 6 === 0 ? 'text-blue-400/40' :
+                i % 6 === 1 ? 'text-purple-400/40' :
+                i % 6 === 2 ? 'text-indigo-400/40' :
+                i % 6 === 3 ? 'text-pink-400/40' :
+                i % 6 === 4 ? 'text-emerald-400/40' :
+                'text-orange-400/40'
+              }`} />
+            </motion.div>
+          );
+        })}
       </div>
 
-      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="w-full max-w-md mx-auto"
-        >
+      <div className="relative z-10 min-h-screen">
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 min-h-screen items-center">
+            
+            {/* Left Side - Feature Cards */}
+            <motion.div 
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              className="space-y-8 lg:pr-8"
+            >
+              {/* Main Header */}
+              <motion.div 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="text-center lg:text-left"
+              >
+                <motion.div
+                  animate={{ rotate: [0, 5, -5, 0] }}
+                  transition={{ duration: 3, repeat: Infinity }}
+                  className="inline-flex items-center space-x-3 mb-6"
+                >
+                  <div className="p-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl shadow-lg">
+                    <Brain className="w-10 h-10 text-white" />
+                  </div>
+                  <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                    ReadFast AI
+                  </h1>
+                </motion.div>
+                <p className="text-xl text-neutral-600 dark:text-neutral-300 mb-8">
+                  Supercharge your reading with AI-powered speed reading technology
+                </p>
+              </motion.div>
+
+              {/* Feature Cards */}
+              <div className="grid gap-6">
+                {/* AI Speed Reading Card */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  whileHover={{ scale: 1.02, y: -5 }}
+                  className="bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl rounded-2xl p-6 border border-white/20 dark:border-neutral-700/50 shadow-xl relative overflow-hidden group"
+                >
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  />
+                  <div className="relative flex items-start space-x-4">
+                    <motion.div
+                      animate={{ rotate: [0, 360] }}
+                      transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                      className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-lg"
+                    >
+                      <Zap className="w-6 h-6 text-white" />
+                    </motion.div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
+                        AI-Powered Speed Reading
+                      </h3>
+                      <p className="text-neutral-600 dark:text-neutral-300 text-sm">
+                        Advanced algorithms adapt to your reading patterns and optimize text presentation for maximum comprehension and speed.
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Smart Analytics Card */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                  whileHover={{ scale: 1.02, y: -5 }}
+                  className="bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl rounded-2xl p-6 border border-white/20 dark:border-neutral-700/50 shadow-xl relative overflow-hidden group"
+                >
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  />
+                  <div className="relative flex items-start space-x-4">
+                    <motion.div
+                      animate={{ scale: [1, 1.1, 1] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="p-3 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl shadow-lg"
+                    >
+                      <TrendingUp className="w-6 h-6 text-white" />
+                    </motion.div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
+                        Smart Progress Analytics
+                      </h3>
+                      <p className="text-neutral-600 dark:text-neutral-300 text-sm">
+                        AI tracks your reading metrics, comprehension rates, and provides personalized insights to improve your skills.
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Adaptive Learning Card */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.8 }}
+                  whileHover={{ scale: 1.02, y: -5 }}
+                  className="bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl rounded-2xl p-6 border border-white/20 dark:border-neutral-700/50 shadow-xl relative overflow-hidden group"
+                >
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  />
+                  <div className="relative flex items-start space-x-4">
+                    <motion.div
+                      animate={{ rotate: [0, 10, -10, 0] }}
+                      transition={{ duration: 4, repeat: Infinity }}
+                      className="p-3 bg-gradient-to-r from-orange-500 to-pink-600 rounded-xl shadow-lg"
+                    >
+                      <Target className="w-6 h-6 text-white" />
+                    </motion.div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
+                        Adaptive Learning System
+                      </h3>
+                      <p className="text-neutral-600 dark:text-neutral-300 text-sm">
+                        Machine learning adjusts difficulty levels and training exercises based on your performance and learning style.
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Smart Recommendations */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.0 }}
+                  whileHover={{ scale: 1.02, y: -5 }}
+                  className="bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl rounded-2xl p-6 border border-white/20 dark:border-neutral-700/50 shadow-xl relative overflow-hidden group"
+                >
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  />
+                  <div className="relative flex items-start space-x-4">
+                    <motion.div
+                      animate={{ 
+                        rotateY: [0, 180, 360],
+                        scale: [1, 1.1, 1]
+                      }}
+                      transition={{ duration: 6, repeat: Infinity }}
+                      className="p-3 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl shadow-lg"
+                    >
+                      <Lightbulb className="w-6 h-6 text-white" />
+                    </motion.div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
+                        AI Reading Recommendations
+                      </h3>
+                      <p className="text-neutral-600 dark:text-neutral-300 text-sm">
+                        Get personalized content suggestions and reading strategies powered by AI to maximize your learning potential.
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Stats Section */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.2 }}
+                className="grid grid-cols-3 gap-4 pt-6"
+              >
+                <motion.div 
+                  whileHover={{ scale: 1.05 }}
+                  className="text-center p-4 bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-xl border border-white/20 dark:border-neutral-700/30"
+                >
+                  <motion.div
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 2, repeat: Infinity, delay: 0.2 }}
+                    className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+                  >
+                    3x
+                  </motion.div>
+                  <div className="text-xs text-neutral-600 dark:text-neutral-400">Faster Reading</div>
+                </motion.div>
+                
+                <motion.div 
+                  whileHover={{ scale: 1.05 }}
+                  className="text-center p-4 bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-xl border border-white/20 dark:border-neutral-700/30"
+                >
+                  <motion.div
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 2, repeat: Infinity, delay: 0.4 }}
+                    className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent"
+                  >
+                    95%
+                  </motion.div>
+                  <div className="text-xs text-neutral-600 dark:text-neutral-400">Comprehension</div>
+                </motion.div>
+                
+                <motion.div 
+                  whileHover={{ scale: 1.05 }}
+                  className="text-center p-4 bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-xl border border-white/20 dark:border-neutral-700/30"
+                >
+                  <motion.div
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 2, repeat: Infinity, delay: 0.6 }}
+                    className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-pink-600 bg-clip-text text-transparent"
+                  >
+                    50K+
+                  </motion.div>
+                  <div className="text-xs text-neutral-600 dark:text-neutral-400">Users</div>
+                </motion.div>
+              </motion.div>
+            </motion.div>
+
+            {/* Right Side - Auth Section */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="w-full max-w-md mx-auto lg:mx-0 lg:ml-auto"
+            >
           {/* Main Login Card */}
           <div className="bg-white/70 dark:bg-neutral-800/70 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/20 dark:border-neutral-700/50 relative overflow-hidden">
             {/* Sparkle decoration */}
@@ -492,8 +710,10 @@ const NewLogin: React.FC = () => {
             </motion.button>
           </motion.div>
         )}
-      </div>
-    </motion.div>
+        </div>
+            </motion.div>
+          </div>
+        </div>
       </div>
     </div>
   );
