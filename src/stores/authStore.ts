@@ -222,7 +222,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   updateProfile: async (updates: Partial<Profile>) => {
     try {
       const { user, profile } = get();
-      if (!user?.id) throw new Error('No authenticated user');
+      console.log('🔄 updateProfile called with:', { updates, user: user?.id, profile: profile?.id });
+      
+      if (!user?.id) {
+        console.error('❌ No authenticated user found');
+        throw new Error('No authenticated user');
+      }
       
       const updatedProfile = await profileService.upsertProfile(user.id, {
         ...profile,
@@ -231,7 +236,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       
       set({ profile: updatedProfile });
       toast.success('Profile updated successfully!');
+      console.log('✅ Profile updated successfully');
     } catch (error: any) {
+      console.error('❌ Profile update error:', error);
       toast.error(error.message || 'Failed to update profile');
       throw error;
     }

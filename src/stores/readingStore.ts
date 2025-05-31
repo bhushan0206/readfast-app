@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { create } from 'zustand';
 import { saveReadingSession, updateReadingStats } from '../services/supabase';
-import { useAchievementStore } from './achievementStore';
+import { useAchievementStore } from '../store/achievementStore';
 
 interface ReadingState {
   currentText: any | null;
@@ -59,24 +59,19 @@ export const useReadingStore = create<ReadingState>((set, get) => ({
   },
 
   startReading: (textId) => {
-    console.log('🚀 Starting reading session for text:', textId);
-    const startTime = new Date();
-    
     set({
       isReading: true,
       progress: 0,
       currentIndex: 0,
       currentSession: {
+        ...get().currentSession,
         textId,
-        startTime,
+        startTime: new Date(),
         endTime: null,
         wordsRead: 0,
         wpm: 0,
-        comprehensionScore: null,
       }
     });
-    
-    console.log('✅ Reading session started at:', startTime);
   },
 
   pauseReading: () => {
@@ -104,14 +99,9 @@ export const useReadingStore = create<ReadingState>((set, get) => ({
   },
 
   stopReading: async (totalWords: number, userId?: string) => {
-    const state = get();
-    const { currentSession, progress } = state;
+    const { currentSession } = get();
     
-    console.log('🔍 stopReading called with:', { totalWords, userId });
-    console.log('🔍 Current state:', { currentSession, progress });
-    
-    if (!currentSession.textId || !currentSession.startTime) {
-      console.log('❌ Missing required session data:', { textId: currentSession.textId, startTime: currentSession.startTime });
+    if (!userId || !currentSession.textId || !currentSession.startTime) {
       set({ isReading: false });
       return;
     }
@@ -119,69 +109,43 @@ export const useReadingStore = create<ReadingState>((set, get) => ({
     const endTime = new Date();
     const timeSpentMs = endTime.getTime() - currentSession.startTime.getTime();
     const timeSpentMinutes = timeSpentMs / 60000; // Convert to minutes
-    const timeSpentSeconds = timeSpentMs / 1000; // Convert to seconds for display
     
-    // Calculate words read - if progress is 0 or very low, assume they read the whole text
-    let wordsRead;
-    if (progress <= 5) {
-      // If progress is very low, assume they read at least some portion based on time
-      // Use a minimum reading speed assumption (e.g., 100 WPM minimum)
-      wordsRead = Math.min(totalWords, Math.max(Math.round(timeSpentMinutes * 100), totalWords * 0.1));
-    } else {
-      wordsRead = Math.round((totalWords * progress) / 100);
-    }
-    
-    // Calculate WPM - ensure it's reasonable
-    let wpm = 0;
-    if (timeSpentMinutes > 0 && wordsRead > 0) {
-      wpm = Math.round(wordsRead / timeSpentMinutes);
-      // Cap WPM at reasonable bounds (50-1000 WPM)
-      wpm = Math.max(50, Math.min(1000, wpm));
-    }
+    const wordsRead = totalWords || 0;
+    const wpm = timeSpentMinutes > 0 ? Math.round(wordsRead / timeSpentMinutes) : 0;
     
     console.log('📊 Reading session completed:', {
-      totalWords,
-      progress,
       wordsRead,
       wpm,
-      timeSpentMs,
       timeSpentMinutes: timeSpentMinutes.toFixed(2),
-      timeSpentSeconds: timeSpentSeconds.toFixed(1),
-      startTime: currentSession.startTime,
-      endTime
+      totalWords
     });
     
     // Update state FIRST before saving to database
-    const updatedSession = {
-      ...currentSession,
-      endTime,
-      wordsRead,
-      wpm,
-    };
-    
     set({
       isReading: false,
-      currentSession: updatedSession
+      currentSession: {
+        ...currentSession,
+        endTime,
+        wordsRead,
+        wpm,
+      }
     });
     
     console.log('✅ Session state updated with:', { wordsRead, wpm });
-    console.log('✅ Full updated session:', updatedSession);
     
-    // Only save to database if user is authenticated
-    if (userId) {
-      try {
-        // Save reading session
-        const sessionData = {
-          user_id: userId,
-          text_id: currentSession.textId,
-          start_time: currentSession.startTime.toISOString(),
-          end_time: endTime.toISOString(),
-          words_read: wordsRead,
-          wpm,
-          comprehension_score: currentSession.comprehensionScore,
-        };
-        
-        await saveReadingSession(sessionData);
+    try {
+      // Save reading session
+      const sessionData = {
+        user_id: userId,
+        text_id: currentSession.textId,
+        start_time: currentSession.startTime.toISOString(),
+        end_time: endTime.toISOString(),
+        words_read: wordsRead,
+        wpm,
+        comprehension_score: currentSession.comprehensionScore,
+      };
+      
+      await saveReadingSession(sessionData);
       
       // Update reading stats
       const statsUpdate: {
@@ -225,21 +189,18 @@ export const useReadingStore = create<ReadingState>((set, get) => ({
             avg_wpm: currentStats.avg_wpm || 0,
             avg_comprehension: currentStats.avg_comprehension || null
           });
-        }        } catch (error) {
-          console.error('Error fetching stats for achievement checking:', error);
         }
-        
       } catch (error) {
-        console.error('Error saving reading session or stats:', error);
+        console.error('Error fetching stats for achievement checking:', error);
       }
-    } else {
-      console.log('📝 Session completed without database save (user not authenticated)');
+      
+    } catch (error) {
+      console.error('Error saving reading session or stats:', error);
     }
   },
 
   updateProgress: (index, totalWords) => {
     const progress = Math.min(100, Math.round((index / totalWords) * 100));
-    console.log('📈 Progress updated:', { index, totalWords, progress });
     set({
       progress,
       currentIndex: index,

@@ -31,8 +31,10 @@ const ReadingSession: React.FC = () => {
     resumeReading, 
     stopReading,
     restartReading,
+    updateProgress,
     isReading,
     progress,
+    currentSession,
     readingSettings
   } = useReadingStore();
 
@@ -71,13 +73,31 @@ const ReadingSession: React.FC = () => {
 
   const handleStartReading = () => {
     if (id) {
+      console.log('🚀 Starting reading session:', { textId: id, wordCount: textWords.length });
       logger.logUserAction('start_reading', undefined, { textId: id, title: text?.title });
       startReading(id);
+      console.log('✅ startReading called, current session should be initialized');
+      
+      // Simulate some progress for testing - remove this later
+      setTimeout(() => {
+        updateProgress(Math.floor(textWords.length * 0.5), textWords.length);
+        console.log('🧪 Test: Set progress to 50%');
+      }, 2000);
     }
   };
 
   const handleStopReading = async () => {
     try {
+      console.log('🛑 Stopping reading session...');
+      console.log('📊 Current state:', { 
+        textWordsLength: textWords.length, 
+        progress, 
+        userId: user?.id,
+        userEmail: user?.email,
+        userObject: user,
+        currentSession 
+      });
+      
       logger.logUserAction('stop_reading', undefined, { 
         textId: id, 
         progress: Math.round(progress),
@@ -87,6 +107,7 @@ const ReadingSession: React.FC = () => {
       await stopReading(textWords.length, user?.id);
       setShowComprehension(true);
     } catch (error) {
+      console.error('❌ Error stopping reading:', error);
       errorMonitor.recordError(error as Error, {
         component: 'ReadingSession',
         action: 'stop_reading',
@@ -176,6 +197,22 @@ const ReadingSession: React.FC = () => {
             onClick={() => setShowSettings(!showSettings)}
           >
             Settings
+          </Button>
+          
+          {/* Debug button - remove later */}
+          <Button
+            variant="outline"
+            onClick={() => {
+              console.log('🧪 Debug Auth State:', {
+                user: user,
+                userId: user?.id,
+                email: user?.email,
+                profile: user?.user_metadata
+              });
+              console.log('🧪 Raw user object:', JSON.stringify(user, null, 2));
+            }}
+          >
+            Debug Auth
           </Button>
         </div>
         

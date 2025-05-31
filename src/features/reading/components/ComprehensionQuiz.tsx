@@ -38,6 +38,11 @@ const ComprehensionQuiz: React.FC<ComprehensionQuizProps> = ({ text, onComplete 
   const { currentSession, setComprehensionScore } = useReadingStore();
   const { checkAchievements } = useAchievementStore();
   
+  // Debug: Log the current session data
+  console.log('🔍 ComprehensionQuiz: Current session data:', currentSession);
+  console.log('🔍 ComprehensionQuiz: WPM:', currentSession?.wpm);
+  console.log('🔍 ComprehensionQuiz: Words read:', currentSession?.wordsRead);
+  
   const [questions] = useState(generateMockQuestions(text));
   const [answers, setAnswers] = useState<number[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -125,11 +130,15 @@ const ComprehensionQuiz: React.FC<ComprehensionQuizProps> = ({ text, onComplete 
             <div className="grid grid-cols-2 gap-4 text-left">
               <div className="p-4 bg-neutral-50 dark:bg-neutral-800/50 rounded-lg border border-neutral-200 dark:border-neutral-700">
                 <h3 className="font-medium text-neutral-800 dark:text-neutral-200">Reading Speed</h3>
-                <p className="text-2xl font-bold text-primary-600 dark:text-primary-400">{currentSession.wpm || 0} WPM</p>
+                <p className="text-2xl font-bold text-primary-600 dark:text-primary-400">
+                  {currentSession?.wpm || 'N/A'} {currentSession?.wpm ? 'WPM' : ''}
+                </p>
               </div>
               <div className="p-4 bg-neutral-50 dark:bg-neutral-800/50 rounded-lg border border-neutral-200 dark:border-neutral-700">
                 <h3 className="font-medium text-neutral-800 dark:text-neutral-200">Words Read</h3>
-                <p className="text-2xl font-bold text-primary-600 dark:text-primary-400">{currentSession.wordsRead || 0}</p>
+                <p className="text-2xl font-bold text-primary-600 dark:text-primary-400">
+                  {currentSession?.wordsRead || 'N/A'}
+                </p>
               </div>
             </div>
           </div>
