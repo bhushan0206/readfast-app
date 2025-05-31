@@ -11,6 +11,8 @@ import TextDisplayEnhanced from '../components/TextDisplayEnhanced';
 import { logger, LogCategory } from '../../../utils/enhancedLogger-clean';
 import { ContentSecurity } from '../../../utils/securityMiddleware-clean';
 import { errorMonitor } from '../../../utils/errorMonitoring';
+import { motion, AnimatePresence } from 'framer-motion';
+import { BookOpen, Zap } from 'lucide-react';
 
 const ReadingSession: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -146,142 +148,224 @@ const ReadingSession: React.FC = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">{text.title}</h1>
-        {!isReading && (
-          <p className="text-neutral-600 dark:text-neutral-400 mt-2">
-            {textWords.length} words · Estimated time: {Math.ceil(textWords.length / readingSettings.speed)} minutes
-          </p>
-        )}
-      </div>
-      
-      {/* Progress Bar */}
-      <div className="mb-8">
-        <div className="progress-bar">
-          <div 
-            className="progress-bar-fill" 
-            style={{ width: `${progress}%` }}
-          ></div>
-        </div>
-        <div className="flex justify-between mt-2 text-sm text-neutral-500 dark:text-neutral-400">
-          <span>{Math.round(progress)}% complete</span>
-          {isReading && (
-            <span>
-              Remaining: ~{Math.ceil((textWords.length - (textWords.length * (progress / 100))) / readingSettings.speed)} min
-            </span>
-          )}
-        </div>
-      </div>
-      
-      {/* Text Display */}
-      <div className="card mb-6 reading-container">
-        <TextDisplayEnhanced 
-          text={textWords} 
-          isReading={isReading} 
-          settings={{
-            speed: readingSettings.speed,
-            fontSize: readingSettings.fontSize,
-            mode: readingSettings.mode,
-            chunkSize: readingSettings.chunkSize
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-neutral-900 dark:via-indigo-900/10 dark:to-purple-900/10 relative">
+      {/* Reading Focus Background */}
+      <div className="absolute inset-0 overflow-hidden">
+        <motion.div
+          animate={{
+            scale: [1, 1.1, 1],
+            opacity: [0.3, 0.5, 0.3],
           }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-indigo-200/40 to-purple-200/40 dark:from-indigo-900/30 dark:to-purple-900/30 rounded-full blur-3xl"
         />
       </div>
-      
-      {/* Controls */}
-      <div className="flex flex-col md:flex-row justify-between items-center mt-6 space-y-4 md:space-y-0">
-        <div className="flex space-x-2">
-          <Button
-            variant="outline"
-            leftIcon={<Settings size={18} />}
-            onClick={() => setShowSettings(!showSettings)}
-          >
-            Settings
-          </Button>
-          
-          {/* Debug button - remove later */}
-          <Button
-            variant="outline"
-            onClick={() => {
-              console.log('🧪 Debug Auth State:', {
-                user: user,
-                userId: user?.id,
-                email: user?.email,
-                profile: user?.user_metadata
-              });
-              console.log('🧪 Raw user object:', JSON.stringify(user, null, 2));
-            }}
-          >
-            Debug Auth
-          </Button>
-        </div>
-        
-        <div className="flex space-x-2">
-          <Button
-            variant="outline"
-            leftIcon={<SkipBack size={18} />}
-            disabled={!isReading}
-          >
-            Back 10 words
-          </Button>
-          
-          {isReading ? (
-            <Button
-              variant="primary"
-              leftIcon={<Pause size={18} />}
-              onClick={pauseReading}
+
+      <div className="relative z-10 max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
+        {/* Header with improved styling */}
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-8"
+        >
+          <div className="flex items-center justify-center space-x-3 mb-4">
+            <motion.div
+              animate={{ rotate: [0, 5, -5, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
             >
-              Pause
-            </Button>
-          ) : (
-            <Button
-              variant="primary"
-              leftIcon={<Play size={18} />}
-              onClick={progress > 0 ? resumeReading : handleStartReading}
+              <BookOpen className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
+            </motion.div>
+            <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+              {text.title}
+            </h1>
+          </div>
+          {!isReading && (
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="text-neutral-600 dark:text-neutral-300 text-lg"
             >
-              {progress > 0 ? 'Resume' : 'Start Reading'}
-            </Button>
+              <Zap className="inline w-5 h-5 mr-2 text-yellow-500" />
+              {textWords.length} words · Estimated time: {Math.ceil(textWords.length / readingSettings.speed)} minutes
+            </motion.p>
           )}
-          
-          <Button
-            variant="outline"
-            leftIcon={<SkipForward size={18} />}
-            disabled={!isReading}
-          >
-            Skip 10 words
-          </Button>
-          
-          {/* Restart Button - Always show when not reading and has progress */}
-          {!isReading && progress > 0 && (
-            <Button
-              variant="outline"
-              leftIcon={<RotateCcw size={18} />}
-              onClick={handleRestartReading}
-              className="text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300"
-            >
-              Restart
-            </Button>
-          )}
-        </div>
+        </motion.div>
         
-        <div className="flex space-x-2">
-          <Button
-            variant="danger"
-            onClick={handleStopReading}
-            className="bg-red-600 hover:bg-red-700 text-white font-medium px-6 py-2"
-          >
-            Finish Reading
-          </Button>
-        </div>
+        {/* Enhanced Progress Bar */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="mb-8"
+        >
+          <div className="bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-2xl border border-white/20 dark:border-neutral-700/50 shadow-lg p-6">
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Reading Progress</span>
+              <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400">{Math.round(progress)}%</span>
+            </div>
+            <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-3 overflow-hidden">
+              <motion.div 
+                className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full"
+                initial={{ width: 0 }}
+                animate={{ width: `${progress}%` }}
+                transition={{ duration: 0.5 }}
+              />
+            </div>
+            {isReading && (
+              <div className="mt-3 text-sm text-neutral-500 dark:text-neutral-400 text-center">
+                <motion.span
+                  animate={{ opacity: [1, 0.5, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                  Remaining: ~{Math.ceil((textWords.length - (textWords.length * (progress / 100))) / readingSettings.speed)} min
+                </motion.span>
+              </div>
+            )}
+          </div>
+        </motion.div>
+        
+        {/* Enhanced Text Display Container */}
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="bg-white/70 dark:bg-neutral-800/70 backdrop-blur-xl rounded-2xl border border-white/20 dark:border-neutral-700/50 shadow-2xl mb-8 overflow-hidden"
+        >
+          <div className="p-8 sm:p-12">
+            <TextDisplayEnhanced 
+              text={textWords} 
+              isReading={isReading} 
+              settings={{
+                speed: readingSettings.speed,
+                fontSize: readingSettings.fontSize,
+                mode: readingSettings.mode,
+                chunkSize: readingSettings.chunkSize
+              }}
+            />
+          </div>
+        </motion.div>
+        
+        {/* Enhanced Controls */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.6 }}
+          className="bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-2xl border border-white/20 dark:border-neutral-700/50 shadow-lg p-6"
+        >
+          <div className="flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0 lg:space-x-4">
+            <div className="flex space-x-2">
+              <Button
+                variant="outline"
+                leftIcon={<Settings size={18} />}
+                onClick={() => setShowSettings(!showSettings)}
+              >
+                Settings
+              </Button>
+              
+              {/* Debug button - remove later */}
+              <Button
+                variant="outline"
+                onClick={() => {
+                  console.log('🧪 Debug Auth State:', {
+                    user: user,
+                    userId: user?.id,
+                    email: user?.email,
+                    profile: user?.user_metadata
+                  });
+                  console.log('🧪 Raw user object:', JSON.stringify(user, null, 2));
+                }}
+              >
+                Debug Auth
+              </Button>
+            </div>
+            
+            <div className="flex space-x-2">
+              <Button
+                variant="outline"
+                leftIcon={<SkipBack size={18} />}
+                disabled={!isReading}
+              >
+                Back 10 words
+              </Button>
+              
+              {isReading ? (
+                <Button
+                  variant="primary"
+                  leftIcon={<Pause size={18} />}
+                  onClick={pauseReading}
+                >
+                  Pause
+                </Button>
+              ) : (
+                <Button
+                  variant="primary"
+                  leftIcon={<Play size={18} />}
+                  onClick={progress > 0 ? resumeReading : handleStartReading}
+                >
+                  {progress > 0 ? 'Resume' : 'Start Reading'}
+                </Button>
+              )}
+              
+              <Button
+                variant="outline"
+                leftIcon={<SkipForward size={18} />}
+                disabled={!isReading}
+              >
+                Skip 10 words
+              </Button>
+              
+              {/* Restart Button - Always show when not reading and has progress */}
+              {!isReading && progress > 0 && (
+                <Button
+                  variant="outline"
+                  leftIcon={<RotateCcw size={18} />}
+                  onClick={handleRestartReading}
+                  className="text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300"
+                >
+                  Restart
+                </Button>
+              )}
+            </div>
+            
+            <div className="flex space-x-2">
+              <Button
+                variant="danger"
+                onClick={handleStopReading}
+                className="bg-red-600 hover:bg-red-700 text-white font-medium px-6 py-2"
+              >
+                Finish Reading
+              </Button>
+            </div>
+          </div>
+        </motion.div>
+        
+        {/* Enhanced Settings Panel */}
+        <AnimatePresence>
+          {showSettings && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="mt-8 bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-2xl border border-white/20 dark:border-neutral-700/50 shadow-lg overflow-hidden"
+            >
+              <div className="p-6">
+                <h3 className="text-xl font-semibold text-neutral-900 dark:text-white mb-6 flex items-center">
+                  <Settings className="w-5 h-5 mr-2 text-indigo-600 dark:text-indigo-400" />
+                  Reading Settings
+                </h3>
+                <SpeedControl />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-      
-      {/* Settings Panel */}
-      {showSettings && (
-        <div className="mt-8 card">
-          <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">Reading Settings</h3>
-          <SpeedControl />
-        </div>
-      )}
     </div>
   );
 };

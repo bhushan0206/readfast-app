@@ -59,6 +59,7 @@ function App() {
               <Routes>
                 {/* Auth Routes */}
                 <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Login />} />
                 <Route path="/auth/callback" element={
                   <div className="flex items-center justify-center min-h-screen">
                     <div className="text-center">
