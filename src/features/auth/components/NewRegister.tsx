@@ -60,8 +60,15 @@ const NewRegister: React.FC = () => {
     if (!validateForm()) return;
 
     try {
+      console.log('🚀 Starting registration process...');
+      console.log('Email:', email);
+      console.log('Full Name:', fullName);
+      
       await signUp(email, password, fullName);
+      
+      console.log('✅ Registration completed successfully');
     } catch (error: any) {
+      console.error('❌ Registration error:', error);
       setErrors({ submit: error.message });
     }
   };
@@ -702,23 +709,71 @@ const NewRegister: React.FC = () => {
                   </motion.button>
                 </motion.form>
 
-                {/* Sign In Link */}
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1.3 }}
-                  className="mt-8 text-center"
-                >
-                  <p className="text-neutral-600 dark:text-neutral-400">
-                    Already have an account?{' '}
-                    <Link
-                      to="/login"
-                      className="font-medium text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 transition-colors"
+                {/* Development Debug Info */}
+                {process.env.NODE_ENV === 'development' && (
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 1.4 }}
+                    className="mt-6 space-y-2 border-t border-neutral-200/50 dark:border-neutral-600/50 pt-4"
+                  >
+                    <motion.p 
+                      initial={{ scale: 0.9 }}
+                      animate={{ scale: 1 }}
+                      className="text-xs text-neutral-500 text-center font-medium"
                     >
-                      Sign in
-                    </Link>
-                  </p>
-                </motion.div>
+                      🛠️ Development Tools
+                    </motion.p>
+                    
+                    <motion.button
+                      type="button"
+                      onClick={async () => {
+                        console.log('🔍 Checking Supabase auth settings...');
+                        const { supabase } = await import('../../../services/auth');
+                        
+                        try {
+                          // Check current session
+                          const { data: session } = await supabase.auth.getSession();
+                          console.log('Current session:', session);
+                          
+                          // Check auth settings
+                          const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/auth/v1/settings`, {
+                            headers: {
+                              'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+                              'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
+                            }
+                          });
+                          
+                          if (response.ok) {
+                            const settings = await response.json();
+                            console.log('Auth settings:', settings);
+                          }
+                          
+                          // Test with demo account
+                          const testResult = await supabase.auth.signUp({
+                            email: 'test+' + Date.now() + '@demo.com',
+                            password: 'password123',
+                            options: {
+                              data: {
+                                full_name: 'Test User'
+                              }
+                            }
+                          });
+                          
+                          console.log('Test signup result:', testResult);
+                          
+                        } catch (error) {
+                          console.error('Debug error:', error);
+                        }
+                      }}
+                      whileHover={{ scale: 1.02, y: -1 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-xs py-2.5 px-3 rounded-lg transition-all duration-200 font-medium shadow-sm"
+                    >
+                      🔍 Debug Auth Settings
+                    </motion.button>
+                  </motion.div>
+                )}
               </div>
             </motion.div>
           </div>
