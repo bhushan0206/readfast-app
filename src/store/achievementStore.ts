@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { supabase, getUserAchievements } from '../services/supabase';
 import { toast } from 'sonner';
-import { useAuthStore } from './authStore';
 import React from 'react';
 
 interface AchievementState {
@@ -20,11 +19,19 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
   initialized: false,
 
   loadAchievements: async () => {
-    const { user } = useAuthStore.getState();
-    if (!user) return;
-
     try {
       set({ loading: true });
+      console.log('🔄 Achievement Store: Starting to load achievements...');
+      
+      // Get current user from Supabase auth directly
+      const { data: { user } } = await supabase.auth.getUser();
+      console.log('🔍 Achievement Store: Current user:', user?.id);
+      
+      if (!user) {
+        console.log('❌ Achievement Store: No authenticated user found');
+        set({ loading: false, initialized: true });
+        return;
+      }
 
       // Load all achievements
       const { data: achievements, error: achievementsError } = await supabase
@@ -33,7 +40,7 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
         .order('level', { ascending: true });
 
       if (achievementsError) {
-        console.error('Error loading achievements:', achievementsError);
+        console.error('❌ Error loading achievements:', achievementsError);
         // Set some default achievements if database fails
         const defaultAchievements = [
           {
@@ -59,24 +66,27 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
           }
         ];
         
+        console.log('✅ Using default achievements:', defaultAchievements.length);
+        
+        // Load user achievements
+        const userAchievements = await getUserAchievements(user.id);
+        console.log('✅ Loaded user achievements:', userAchievements?.length || 0);
+        
         set({
           achievements: defaultAchievements,
+          userAchievements: userAchievements || [],
           loading: false,
           initialized: true,
         });
         
-        // Load user achievements
-        const userAchievements = await getUserAchievements(user.id);
-        set({ userAchievements: userAchievements || [] });
-        
         return;
       }
 
+      console.log('✅ Loaded achievements from database:', achievements?.length || 0);
+
       // Load user achievements
       const userAchievements = await getUserAchievements(user.id);
-
-      console.log('Loaded achievements:', achievements);
-      console.log('Loaded user achievements:', userAchievements);
+      console.log('✅ Loaded user achievements:', userAchievements?.length || 0);
 
       set({
         achievements: achievements || [],
@@ -91,16 +101,20 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
   },
 
   checkAchievements: async (stats) => {
-    const { user } = useAuthStore.getState();
-    if (!user) {
-      console.log('No user found for achievement checking');
-      return [];
-    }
+    try {
+      // Get current user from Supabase auth directly
+      const { data: { user } } = await supabase.auth.getUser();
+      console.log('🔍 checkAchievements: Current user:', user?.id);
+      
+      if (!user) {
+        console.log('❌ checkAchievements: No user found for achievement checking');
+        return [];
+      }
 
     const { achievements, userAchievements } = get();
-    console.log('Checking achievements with stats:', stats);
-    console.log('Available achievements:', achievements);
-    console.log('Current user achievements:', userAchievements);
+    console.log('🔍 Checking achievements with stats:', stats);
+    console.log('🔍 Available achievements:', achievements.length);
+    console.log('🔍 Current user achievements:', userAchievements.length);
     
     const newlyUnlockedAchievements: any[] = [];
 
@@ -279,5 +293,9 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
     }
 
     return newlyUnlockedAchievements;
+    } catch (error) {
+      console.error('Error checking achievements:', error);
+      return [];
+    }
   }
 }));

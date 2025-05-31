@@ -1,16 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { useAchievementStore } from '../../../store/achievementStore';
-import { Award, BookOpen, TrendingUp, Clock } from 'lucide-react';
+import { useAuth } from '../../auth/providers/AuthProvider';
+import { Award, BookOpen, TrendingUp, Clock, RefreshCw } from 'lucide-react';
+import Button from '../../../shared/components/Button';
 
 const Achievements: React.FC = () => {
   const { achievements, userAchievements, loadAchievements, loading, initialized } = useAchievementStore();
+  const { user } = useAuth();
   const [achievementsMap, setAchievementsMap] = useState<{ [key: string]: any }>({});
   
+  // Debug logging
+  console.log('🔍 Achievements Debug:', {
+    user: user?.id,
+    achievementsCount: achievements.length,
+    userAchievementsCount: userAchievements.length,
+    loading,
+    initialized
+  });
+  
   useEffect(() => {
-    if (!initialized) {
+    if (!initialized && user?.id) {
+      console.log('🔄 Loading achievements for user:', user.id);
       loadAchievements();
     }
-  }, [initialized, loadAchievements]);
+  }, [initialized, loadAchievements, user?.id]);
 
   // Refresh achievements when component mounts or becomes visible
   useEffect(() => {
@@ -59,9 +72,24 @@ const Achievements: React.FC = () => {
   
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">Achievements</h1>
-        <p className="text-neutral-600 dark:text-neutral-300 mt-1">Track your progress and earn badges</p>
+      <div className="mb-6 flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">Achievements</h1>
+          <p className="text-neutral-600 dark:text-neutral-300 mt-1">Track your progress and earn badges</p>
+        </div>
+        
+        {/* Debug refresh button */}
+        <Button
+          variant="outline"
+          leftIcon={<RefreshCw size={18} />}
+          onClick={() => {
+            console.log('🔄 Manual refresh triggered');
+            console.log('🔍 Current user:', user);
+            loadAchievements();
+          }}
+        >
+          Refresh Data
+        </Button>
       </div>
       
       {/* Progress Summary */}
