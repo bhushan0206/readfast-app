@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Mail, Lock, Eye, EyeOff, Zap, BookOpen, Sparkles, Star } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../../../stores/authStore';
 
 // Google Icon Component
@@ -63,135 +63,379 @@ const NewLogin: React.FC = () => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="w-full max-w-md mx-auto"
-    >
-      <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-xl p-8 border border-neutral-200 dark:border-neutral-700">
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">
-            Welcome back
-          </h1>
-          <p className="text-neutral-600 dark:text-neutral-400">
-            Sign in to your account to continue
-          </p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-neutral-900 dark:via-blue-900/10 dark:to-purple-900/10 relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0">
+        <motion.div
+          animate={{
+            x: [0, 100, 0],
+            y: [0, -50, 0],
+            rotate: [0, 180, 360],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-r from-blue-200/30 to-indigo-200/30 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-full blur-3xl"
+        />
+        <motion.div
+          animate={{
+            x: [0, -80, 0],
+            y: [0, 80, 0],
+            rotate: [360, 180, 0],
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-r from-purple-200/30 to-pink-200/30 dark:from-purple-900/20 dark:to-pink-900/20 rounded-full blur-3xl"
+        />
+        
+        {/* Floating reading elements */}
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={i}
+            animate={{
+              y: [0, -20, 0],
+              opacity: [0.3, 0.7, 0.3],
+              rotate: [0, 360],
+            }}
+            transition={{
+              duration: 4 + i,
+              repeat: Infinity,
+              delay: i * 0.8,
+            }}
+            className="absolute"
+            style={{
+              left: `${15 + (i * 10)}%`,
+              top: `${20 + (i * 8)}%`,
+            }}
+          >
+            {i % 3 === 0 ? (
+              <BookOpen size={12 + (i % 3) * 4} className="text-blue-400/40" />
+            ) : i % 3 === 1 ? (
+              <Zap size={10 + (i % 3) * 4} className="text-purple-400/40" />
+            ) : (
+              <Star size={8 + (i % 3) * 4} className="text-indigo-400/40" />
+            )}
+          </motion.div>
+        ))}
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="w-full max-w-md mx-auto"
+        >
+          {/* Main Login Card */}
+          <div className="bg-white/70 dark:bg-neutral-800/70 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/20 dark:border-neutral-700/50 relative overflow-hidden">
+            {/* Sparkle decoration */}
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+              className="absolute top-4 right-4"
+            >
+              <Sparkles className="w-6 h-6 text-yellow-400/60" />
+            </motion.div>
+
+            {/* Header */}
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-center mb-8"
+            >
+              <div className="flex items-center justify-center space-x-3 mb-4">
+                <motion.div
+                  animate={{ rotate: [0, 5, -5, 0] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="p-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-lg"
+                >
+                  <Zap className="w-8 h-8 text-white" />
+                </motion.div>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                  ReadFast
+                </h1>
+              </div>
+              <motion.p 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4 }}
+                className="text-neutral-600 dark:text-neutral-300 text-lg"
+              >
+                Welcome back! Ready to boost your reading speed?
+              </motion.p>
+            </motion.div>
+
+            <motion.form 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              onSubmit={handleSubmit} 
+              className="space-y-6"
+            >
           {/* Email Field */}
-          <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.6 }}
+          >
+            <label className="block text-sm font-medium bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
               Email Address
             </label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400" size={18} />
+            <div className="relative group">
+              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 group-focus-within:text-blue-500 transition-colors" size={18} />
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="your@email.com"
-                className={`w-full pl-10 pr-4 py-3 border rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white placeholder-neutral-500 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors ${
-                  errors.email ? 'border-red-500' : 'border-neutral-300 dark:border-neutral-600'
+                className={`w-full pl-10 pr-4 py-3 border-2 rounded-xl bg-white/80 dark:bg-neutral-700/80 backdrop-blur-sm text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400 focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-300 hover:shadow-lg ${
+                  errors.email ? 'border-red-500 focus:ring-red-500/50 focus:border-red-500' : 'border-neutral-300 dark:border-neutral-600'
                 }`}
                 disabled={loading}
               />
+              <motion.div
+                initial={false}
+                animate={{ 
+                  scale: email ? 1 : 0,
+                  opacity: email ? 1 : 0 
+                }}
+                transition={{ duration: 0.2 }}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2"
+              >
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              </motion.div>
             </div>
-            {errors.email && (
-              <p className="mt-1 text-sm text-red-500">{errors.email}</p>
-            )}
-          </div>
+            <AnimatePresence>
+              {errors.email && (
+                <motion.p
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="mt-2 text-sm text-red-500"
+                >
+                  {errors.email}
+                </motion.p>
+              )}
+            </AnimatePresence>
+          </motion.div>
 
           {/* Password Field */}
-          <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.7 }}
+          >
+            <label className="block text-sm font-medium bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
               Password
             </label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400" size={18} />
+            <div className="relative group">
+              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 group-focus-within:text-purple-500 transition-colors" size={18} />
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className={`w-full pl-10 pr-12 py-3 border rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white placeholder-neutral-500 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors ${
-                  errors.password ? 'border-red-500' : 'border-neutral-300 dark:border-neutral-600'
+                className={`w-full pl-10 pr-12 py-3 border-2 rounded-xl bg-white/80 dark:bg-neutral-700/80 backdrop-blur-sm text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400 focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all duration-300 hover:shadow-lg ${
+                  errors.password ? 'border-red-500 focus:ring-red-500/50 focus:border-red-500' : 'border-neutral-300 dark:border-neutral-600'
                 }`}
                 disabled={loading}
               />
-              <button
+              <motion.button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-purple-500 transition-colors"
                 disabled={loading}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
+              </motion.button>
             </div>
-            {errors.password && (
-              <p className="mt-1 text-sm text-red-500">{errors.password}</p>
-            )}
-          </div>
+            <AnimatePresence>
+              {errors.password && (
+                <motion.p
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="mt-2 text-sm text-red-500"
+                >
+                  {errors.password}
+                </motion.p>
+              )}
+            </AnimatePresence>
+          </motion.div>
 
           {/* Sign In Button */}
-          <button
+          <motion.button
             type="submit"
             disabled={loading}
-            className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-primary-400 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+            whileHover={{ scale: 1.02, boxShadow: "0 20px 40px rgba(59, 130, 246, 0.3)" }}
+            whileTap={{ scale: 0.98 }}
+            className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 disabled:from-neutral-400 disabled:via-neutral-500 disabled:to-neutral-600 text-white font-medium py-4 px-6 rounded-xl transition-all duration-300 flex items-center justify-center shadow-lg relative overflow-hidden group"
           >
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              initial={false}
+              animate={{
+                x: loading ? ['-100%', '100%'] : '0%'
+              }}
+              transition={{
+                duration: loading ? 1.5 : 0,
+                repeat: loading ? Infinity : 0,
+                ease: "linear"
+              }}
+            />
             {loading ? (
-              <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
+              />
             ) : (
-              'Sign In'
+              <span className="flex items-center space-x-2">
+                <span>Sign In</span>
+                <motion.div
+                  animate={{ x: [0, 5, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                  →
+                </motion.div>
+              </span>
             )}
-          </button>
-        </form>
+          </motion.button>
+        </motion.form>
 
         {/* Divider */}
-        <div className="mt-6">
+        <motion.div 
+          initial={{ opacity: 0, scaleX: 0 }}
+          animate={{ opacity: 1, scaleX: 1 }}
+          transition={{ delay: 0.9 }}
+          className="mt-8"
+        >
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-neutral-300 dark:border-neutral-600"></div>
+              <div className="w-full border-t border-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-600 to-transparent"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400">
+              <span className="px-4 bg-white/70 dark:bg-neutral-800/70 backdrop-blur-sm text-neutral-500 dark:text-neutral-400 rounded-full">
                 Or continue with
               </span>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Google Sign In */}
-        <button
+        <motion.button
           type="button"
           onClick={handleGoogleSignIn}
           disabled={loading}
-          className="mt-6 w-full bg-white dark:bg-neutral-700 border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-600 disabled:bg-neutral-100 dark:disabled:bg-neutral-800 text-neutral-900 dark:text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.0 }}
+          whileHover={{ 
+            scale: 1.02, 
+            boxShadow: "0 10px 30px rgba(0, 0, 0, 0.1)",
+            y: -2
+          }}
+          whileTap={{ scale: 0.98 }}
+          className="mt-6 w-full bg-white/90 dark:bg-neutral-700/90 border-2 border-neutral-200 dark:border-neutral-600 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-white dark:hover:bg-neutral-700 disabled:bg-neutral-100 dark:disabled:bg-neutral-800 text-neutral-900 dark:text-white font-medium py-4 px-6 rounded-xl transition-all duration-300 flex items-center justify-center space-x-3 shadow-lg backdrop-blur-sm relative overflow-hidden group"
         >
-          <GoogleIcon />
+          <motion.div
+            animate={{ rotate: loading ? 360 : 0 }}
+            transition={{ duration: 2, repeat: loading ? Infinity : 0 }}
+          >
+            <GoogleIcon />
+          </motion.div>
           <span>Continue with Google</span>
-        </button>
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          />
+        </motion.button>
 
         {/* Sign Up Link */}
-        <div className="mt-6 text-center">
-          <p className="text-sm text-neutral-600 dark:text-neutral-400">
-            Don't have an account?{' '}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.1 }}
+          className="mt-8 text-center"
+        >
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-neutral-200 dark:border-neutral-700"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-4 bg-white/70 dark:bg-neutral-800/70 backdrop-blur-sm text-neutral-500 dark:text-neutral-400 rounded-full">
+                New to ReadFast?
+              </span>
+            </div>
+          </div>
+          
+          <motion.div 
+            className="mt-4"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
             <Link 
               to="/register" 
-              className="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300"
+              className="inline-flex items-center space-x-2 font-medium text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 px-6 py-3 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl relative overflow-hidden group"
             >
-              Sign up
+              <motion.div
+                animate={{ rotate: [0, 10, -10, 0] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                <Sparkles size={18} className="text-emerald-200" />
+              </motion.div>
+              <span>Create your account</span>
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                animate={{
+                  x: ['-100%', '100%']
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "linear"
+                }}
+              />
             </Link>
-          </p>
-        </div>
+          </motion.div>
+          
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.3 }}
+            className="text-sm text-neutral-500 dark:text-neutral-400 mt-3"
+          >
+            Join thousands of speed readers improving their skills
+          </motion.p>
+        </motion.div>
 
         {/* Development Test Buttons */}
         {process.env.NODE_ENV === 'development' && (
-          <div className="mt-6 space-y-2 border-t border-neutral-200 dark:border-neutral-600 pt-4">
-            <p className="text-xs text-neutral-500 text-center">Development Tools</p>
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.4 }}
+            className="mt-6 space-y-2 border-t border-neutral-200/50 dark:border-neutral-600/50 pt-4"
+          >
+            <motion.p 
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              className="text-xs text-neutral-500 text-center font-medium"
+            >
+              🛠️ Development Tools
+            </motion.p>
             
-            <button
+            <motion.button
               type="button"
               onClick={async () => {
                 try {
@@ -213,12 +457,14 @@ const NewLogin: React.FC = () => {
                   console.error('❌ Demo login error:', error);
                 }
               }}
-              className="w-full bg-green-600 hover:bg-green-700 text-white text-xs py-2 px-3 rounded"
+              whileHover={{ scale: 1.02, y: -1 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-xs py-2.5 px-3 rounded-lg transition-all duration-200 font-medium shadow-sm"
             >
               🧪 Use Demo Account
-            </button>
+            </motion.button>
 
-            <button
+            <motion.button
               type="button"
               onClick={async () => {
                 console.log('🔍 Current auth state:');
@@ -238,14 +484,18 @@ const NewLogin: React.FC = () => {
                 const { data: testData, error } = await supabase.from('profiles').select('count').limit(1);
                 console.log('Supabase connection test:', { data: testData, error });
               }}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs py-2 px-3 rounded"
+              whileHover={{ scale: 1.02, y: -1 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-xs py-2.5 px-3 rounded-lg transition-all duration-200 font-medium shadow-sm"
             >
               🔍 Debug Auth State
-            </button>
-          </div>
+            </motion.button>
+          </motion.div>
         )}
       </div>
     </motion.div>
+      </div>
+    </div>
   );
 };
 
