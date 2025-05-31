@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { useAuth } from '../../auth/providers/AuthProvider';
 import { useReadingStore } from '../../../store/readingStore';
 import { useThemeStore } from '../../../store/themeStore';
+import { supabase } from '../../../services/supabase';
 import Button from '../../../shared/components/Button';
 import Input from '../../../shared/components/Input';
 import SpeedControl from '../../reading/components/SpeedControl';
@@ -35,18 +36,39 @@ const Settings: React.FC = () => {
     try {
       setLoading(true);
       
-      // For now, just save to local state until profile service is integrated
-      console.log('✅ Profile settings saved:', {
+      console.log('🔄 Saving profile to database:', {
+        user_id: user.id,
         full_name: fullName,
         reading_level: readingLevel,
         theme_preference: theme,
       });
       
+      // Save profile to database using direct Supabase upsert
+      const { data, error } = await supabase
+        .from('profiles')
+        .upsert({
+          id: user.id,  // Use 'id' instead of 'user_id'
+          email: user.email,  // Required field
+          full_name: fullName,
+          reading_level: readingLevel,
+          theme_preference: theme,
+          updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'id'  // Conflict on 'id' column
+        });
+      
+      if (error) {
+        console.error('❌ Supabase error details:', error);
+        throw error;
+      }
+      
+      console.log('✅ Profile saved to database successfully:', data);
+      toast.success('Profile updated successfully!');
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
     } catch (error) {
-      console.error('Error updating profile:', error);
-      toast.error('Failed to update profile');
+      console.error('❌ Error updating profile:', error);
+      toast.error('Failed to update profile. Please try again.');
     } finally {
       setLoading(false);
     }

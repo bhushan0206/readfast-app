@@ -3,7 +3,7 @@ import { CheckCircle, XCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useReadingStore } from '../../../store/readingStore';
 import { useAchievementStore } from '../../../store/achievementStore';
-import { useAuthStore } from '../../../stores/authStore';
+import { useAuth } from '../../auth/providers/AuthProvider';
 import { getUserReadingStats } from '../../../services/supabase';
 import Button from '../../../shared/components/Button';
 
@@ -34,7 +34,7 @@ const generateMockQuestions = (text: any) => {
 
 const ComprehensionQuiz: React.FC<ComprehensionQuizProps> = ({ text, onComplete }) => {
   const navigate = useNavigate();
-  const { user } = useAuthStore();
+  const { user } = useAuth();
   const { currentSession, setComprehensionScore } = useReadingStore();
   const { checkAchievements } = useAchievementStore();
   

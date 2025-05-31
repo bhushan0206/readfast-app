@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Play, Pause, SkipForward, SkipBack, Settings, RotateCcw } from 'lucide-react';
 import { getTextById } from '../../../services/supabase';
 import { useReadingStore } from '../../../store/readingStore';
-import { useAuthStore } from '../../../stores/authStore';
+import { useAuth } from '../../auth/providers/AuthProvider';
 import Button from '../../../shared/components/Button';
 import ComprehensionQuiz from '../components/ComprehensionQuiz';
 import SpeedControl from '../components/SpeedControl';
@@ -15,7 +15,7 @@ import { errorMonitor } from '../../../utils/errorMonitoring';
 const ReadingSession: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user } = useAuthStore();
+  const { user } = useAuth();
   
   const [showSettings, setShowSettings] = useState(false);
   const [showComprehension, setShowComprehension] = useState(false);
