@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, Zap, BookOpen, Sparkles, Star, Brain, Target, TrendingUp, Lightbulb } from 'lucide-react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Mail, Lock, Eye, EyeOff, Zap, BookOpen, Sparkles, Star, Brain, Target, TrendingUp, Lightbulb, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../../../stores/authStore';
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { Mail, Lock, Eye, EyeOff, User, Zap, BookOpen, Sparkles, Star, Brain, Target, TrendingUp, Lightbulb, Clock, Award, UserPlus } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../../../stores/authStore';
 
 // Google Icon Component
@@ -15,257 +15,716 @@ const GoogleIcon = () => (
 );
 
 const NewRegister: React.FC = () => {
-  const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-  });
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  
+
   const { signUp, signInWithGoogle, loading } = useAuthStore();
-  const navigate = useNavigate();
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    
-    if (!formData.fullName.trim()) {
+
+    if (!fullName.trim()) {
       newErrors.fullName = 'Full name is required';
     }
-    
-    if (!formData.email) {
+
+    if (!email.trim()) {
       newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
       newErrors.email = 'Please enter a valid email';
     }
-    
-    if (!formData.password) {
+
+    if (!password) {
       newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
+    } else if (password.length < 6) {
       newErrors.password = 'Password must be at least 6 characters';
     }
-    
-    if (!formData.confirmPassword) {
+
+    if (!confirmPassword) {
       newErrors.confirmPassword = 'Please confirm your password';
-    } else if (formData.password !== formData.confirmPassword) {
+    } else if (password !== confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    // Clear error when user starts typing
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!validateForm()) return;
-    
+
     try {
-      await signUp(formData.email, formData.password, formData.fullName);
-      navigate('/');
-    } catch (error) {
-      // Error is handled by the store
+      await signUp(email, password, fullName);
+    } catch (error: any) {
+      setErrors({ submit: error.message });
     }
   };
 
-  const handleGoogleSignIn = async () => {
+  const handleGoogleSignUp = async () => {
     try {
       await signInWithGoogle();
-      // OAuth redirect will handle the rest
-    } catch (error) {
-      // Error is handled by the store
+    } catch (error: any) {
+      setErrors({ submit: error.message });
     }
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="w-full max-w-md mx-auto"
-    >
-      <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-xl p-8 border border-neutral-200 dark:border-neutral-700">
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">
-            Create Account
-          </h1>
-          <p className="text-neutral-600 dark:text-neutral-400">
-            Join us to start your reading journey
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Full Name Field */}
-          <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-              Full Name
-            </label>
-            <div className="relative">
-              <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400" size={18} />
-              <input
-                type="text"
-                value={formData.fullName}
-                onChange={(e) => handleInputChange('fullName', e.target.value)}
-                placeholder="John Doe"
-                className={`w-full pl-10 pr-4 py-3 border rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white placeholder-neutral-500 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors ${
-                  errors.fullName ? 'border-red-500' : 'border-neutral-300 dark:border-neutral-600'
-                }`}
-                disabled={loading}
-              />
-            </div>
-            {errors.fullName && (
-              <p className="mt-1 text-sm text-red-500">{errors.fullName}</p>
-            )}
-          </div>
-
-          {/* Email Field */}
-          <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-              Email Address
-            </label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400" size={18} />
-              <input
-                type="email"
-                value={formData.email}
-                onChange={(e) => handleInputChange('email', e.target.value)}
-                placeholder="your@email.com"
-                className={`w-full pl-10 pr-4 py-3 border rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white placeholder-neutral-500 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors ${
-                  errors.email ? 'border-red-500' : 'border-neutral-300 dark:border-neutral-600'
-                }`}
-                disabled={loading}
-              />
-            </div>
-            {errors.email && (
-              <p className="mt-1 text-sm text-red-500">{errors.email}</p>
-            )}
-          </div>
-
-          {/* Password Field */}
-          <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-              Password
-            </label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400" size={18} />
-              <input
-                type={showPassword ? 'text' : 'password'}
-                value={formData.password}
-                onChange={(e) => handleInputChange('password', e.target.value)}
-                placeholder="••••••••"
-                className={`w-full pl-10 pr-12 py-3 border rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white placeholder-neutral-500 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors ${
-                  errors.password ? 'border-red-500' : 'border-neutral-300 dark:border-neutral-600'
-                }`}
-                disabled={loading}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
-                disabled={loading}
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
-            {errors.password && (
-              <p className="mt-1 text-sm text-red-500">{errors.password}</p>
-            )}
-          </div>
-
-          {/* Confirm Password Field */}
-          <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-              Confirm Password
-            </label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400" size={18} />
-              <input
-                type={showConfirmPassword ? 'text' : 'password'}
-                value={formData.confirmPassword}
-                onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                placeholder="••••••••"
-                className={`w-full pl-10 pr-12 py-3 border rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white placeholder-neutral-500 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors ${
-                  errors.confirmPassword ? 'border-red-500' : 'border-neutral-300 dark:border-neutral-600'
-                }`}
-                disabled={loading}
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
-                disabled={loading}
-              >
-                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
-            {errors.confirmPassword && (
-              <p className="mt-1 text-sm text-red-500">{errors.confirmPassword}</p>
-            )}
-          </div>
-
-          {/* Sign Up Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-primary-400 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
-          >
-            {loading ? (
-              <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
-            ) : (
-              'Create Account'
-            )}
-          </button>
-        </form>
-
-        {/* Divider */}
-        <div className="mt-6">
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-neutral-300 dark:border-neutral-600"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400">
-                Or continue with
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Google Sign In */}
-        <button
-          type="button"
-          onClick={handleGoogleSignIn}
-          disabled={loading}
-          className="mt-6 w-full bg-white dark:bg-neutral-700 border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-600 disabled:bg-neutral-100 dark:disabled:bg-neutral-800 text-neutral-900 dark:text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2"
-        >
-          <GoogleIcon />
-          <span>Continue with Google</span>
-        </button>
-
-        {/* Sign In Link */}
-        <div className="mt-6 text-center">
-          <p className="text-sm text-neutral-600 dark:text-neutral-400">
-            Already have an account?{' '}
-            <Link 
-              to="/login" 
-              className="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300"
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-blue-50 to-purple-50 dark:from-neutral-900 dark:via-emerald-900/10 dark:to-blue-900/10 relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0">
+        <motion.div
+          animate={{
+            x: [0, 120, 0],
+            y: [0, -60, 0],
+            rotate: [0, 180, 360],
+          }}
+          transition={{
+            duration: 22,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className="absolute top-1/3 left-1/3 w-72 h-72 bg-gradient-to-r from-emerald-200/30 to-blue-200/30 dark:from-emerald-900/20 dark:to-blue-900/20 rounded-full blur-3xl"
+        />
+        <motion.div
+          animate={{
+            x: [0, -90, 0],
+            y: [0, 90, 0],
+            rotate: [360, 180, 0],
+          }}
+          transition={{
+            duration: 28,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className="absolute bottom-1/3 right-1/3 w-80 h-80 bg-gradient-to-r from-blue-200/30 to-purple-200/30 dark:from-blue-900/20 dark:to-purple-900/20 rounded-full blur-3xl"
+        />
+        
+        {/* Floating elements */}
+        {[...Array(12)].map((_, i) => {
+          const icons = [UserPlus, BookOpen, Zap, Star, Brain, Target];
+          const IconComponent = icons[i % icons.length];
+          
+          return (
+            <motion.div
+              key={i}
+              animate={{
+                y: [0, -25, 0],
+                opacity: [0.3, 0.8, 0.3],
+                rotate: [0, 360],
+              }}
+              transition={{
+                duration: 5 + i,
+                repeat: Infinity,
+                delay: i * 0.7,
+              }}
+              className="absolute"
+              style={{
+                left: `${10 + (i * 8)}%`,
+                top: `${15 + (i * 7)}%`,
+              }}
             >
-              Sign in
-            </Link>
-          </p>
+              <IconComponent size={10 + (i % 4) * 3} className={`${
+                i % 6 === 0 ? 'text-emerald-400/50' :
+                i % 6 === 1 ? 'text-blue-400/50' :
+                i % 6 === 2 ? 'text-purple-400/50' :
+                i % 6 === 3 ? 'text-pink-400/50' :
+                i % 6 === 4 ? 'text-indigo-400/50' :
+                'text-orange-400/50'
+              }`} />
+            </motion.div>
+          );
+        })}
+      </div>
+
+      <div className="relative z-10 min-h-screen">
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 min-h-screen items-center">
+            
+            {/* Left Side - Feature Cards */}
+            <motion.div 
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              className="space-y-8 lg:pr-8"
+            >
+              {/* Main Header */}
+              <motion.div 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="text-center lg:text-left"
+              >
+                <motion.div
+                  animate={{ rotate: [0, 10, -10, 0] }}
+                  transition={{ duration: 3, repeat: Infinity }}
+                  className="inline-flex items-center space-x-3 mb-6"
+                >
+                  <div className="p-4 bg-gradient-to-r from-emerald-600 to-blue-600 rounded-3xl shadow-lg">
+                    <UserPlus className="w-10 h-10 text-white" />
+                  </div>
+                  <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    Join ReadFast
+                  </h1>
+                </motion.div>
+                <p className="text-xl text-neutral-600 dark:text-neutral-300 mb-8">
+                  Start your journey to faster reading with AI-powered technology
+                </p>
+              </motion.div>
+
+              {/* Feature Cards */}
+              <div className="grid gap-6">
+                {/* Personalized Training Card */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  whileHover={{ scale: 1.02, y: -5 }}
+                  className="bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl rounded-2xl p-6 border border-white/20 dark:border-neutral-700/50 shadow-xl relative overflow-hidden group"
+                >
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  />
+                  <div className="relative flex items-start space-x-4">
+                    <motion.div
+                      animate={{ scale: [1, 1.1, 1] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="p-3 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl shadow-lg"
+                    >
+                      <Target className="w-6 h-6 text-white" />
+                    </motion.div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
+                        Personalized Training Plans
+                      </h3>
+                      <p className="text-neutral-600 dark:text-neutral-300 text-sm">
+                        AI creates custom reading exercises based on your skill level, learning pace, and personal goals.
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Real-time Progress Card */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                  whileHover={{ scale: 1.02, y: -5 }}
+                  className="bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl rounded-2xl p-6 border border-white/20 dark:border-neutral-700/50 shadow-xl relative overflow-hidden group"
+                >
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  />
+                  <div className="relative flex items-start space-x-4">
+                    <motion.div
+                      animate={{ rotate: [0, 360] }}
+                      transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+                      className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-lg"
+                    >
+                      <TrendingUp className="w-6 h-6 text-white" />
+                    </motion.div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
+                        Real-time Progress Tracking
+                      </h3>
+                      <p className="text-neutral-600 dark:text-neutral-300 text-sm">
+                        Watch your reading speed improve with detailed analytics and milestone celebrations.
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Smart Content Card */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.8 }}
+                  whileHover={{ scale: 1.02, y: -5 }}
+                  className="bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl rounded-2xl p-6 border border-white/20 dark:border-neutral-700/50 shadow-xl relative overflow-hidden group"
+                >
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  />
+                  <div className="relative flex items-start space-x-4">
+                    <motion.div
+                      animate={{ 
+                        rotateY: [0, 180, 360],
+                        scale: [1, 1.1, 1]
+                      }}
+                      transition={{ duration: 4, repeat: Infinity }}
+                      className="p-3 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl shadow-lg"
+                    >
+                      <Brain className="w-6 h-6 text-white" />
+                    </motion.div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
+                        Smart Content Curation
+                      </h3>
+                      <p className="text-neutral-600 dark:text-neutral-300 text-sm">
+                        AI selects reading materials perfectly matched to your interests and skill development.
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Achievement System */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.0 }}
+                  whileHover={{ scale: 1.02, y: -5 }}
+                  className="bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl rounded-2xl p-6 border border-white/20 dark:border-neutral-700/50 shadow-xl relative overflow-hidden group"
+                >
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-yellow-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  />
+                  <div className="relative flex items-start space-x-4">
+                    <motion.div
+                      animate={{ 
+                        rotate: [0, 10, -10, 0],
+                        scale: [1, 1.2, 1]
+                      }}
+                      transition={{ duration: 3, repeat: Infinity }}
+                      className="p-3 bg-gradient-to-r from-orange-500 to-yellow-600 rounded-xl shadow-lg"
+                    >
+                      <Award className="w-6 h-6 text-white" />
+                    </motion.div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
+                        Achievement & Rewards System
+                      </h3>
+                      <p className="text-neutral-600 dark:text-neutral-300 text-sm">
+                        Earn badges, unlock new features, and compete with friends as you master speed reading.
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Stats Section */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.2 }}
+                className="grid grid-cols-3 gap-4 pt-6"
+              >
+                <motion.div 
+                  whileHover={{ scale: 1.05 }}
+                  className="text-center p-4 bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-xl border border-white/20 dark:border-neutral-700/30"
+                >
+                  <motion.div
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 2, repeat: Infinity, delay: 0.2 }}
+                    className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent"
+                  >
+                    Free
+                  </motion.div>
+                  <div className="text-xs text-neutral-600 dark:text-neutral-400">Forever Plan</div>
+                </motion.div>
+                
+                <motion.div 
+                  whileHover={{ scale: 1.05 }}
+                  className="text-center p-4 bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-xl border border-white/20 dark:border-neutral-700/30"
+                >
+                  <motion.div
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 2, repeat: Infinity, delay: 0.4 }}
+                    className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+                  >
+                    24/7
+                  </motion.div>
+                  <div className="text-xs text-neutral-600 dark:text-neutral-400">AI Support</div>
+                </motion.div>
+                
+                <motion.div 
+                  whileHover={{ scale: 1.05 }}
+                  className="text-center p-4 bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-xl border border-white/20 dark:border-neutral-700/30"
+                >
+                  <motion.div
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 2, repeat: Infinity, delay: 0.6 }}
+                    className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"
+                  >
+                    30s
+                  </motion.div>
+                  <div className="text-xs text-neutral-600 dark:text-neutral-400">Quick Setup</div>
+                </motion.div>
+              </motion.div>
+            </motion.div>
+
+            {/* Right Side - Registration Form */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="w-full max-w-md mx-auto lg:mx-0 lg:ml-auto"
+            >
+              {/* Main Registration Card */}
+              <div className="bg-white/70 dark:bg-neutral-800/70 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/20 dark:border-neutral-700/50 relative overflow-hidden">
+                {/* Sparkle decoration */}
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                  className="absolute top-4 right-4"
+                >
+                  <Sparkles className="w-6 h-6 text-emerald-400/60" />
+                </motion.div>
+
+                {/* Header */}
+                <motion.div 
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-center mb-8"
+                >
+                  <div className="flex items-center justify-center space-x-3 mb-4">
+                    <motion.div
+                      animate={{ rotate: [0, 10, -10, 0] }}
+                      transition={{ duration: 3, repeat: Infinity }}
+                      className="p-3 bg-gradient-to-r from-emerald-600 to-blue-600 rounded-2xl shadow-lg"
+                    >
+                      <UserPlus className="w-8 h-8 text-white" />
+                    </motion.div>
+                    <h1 className="text-3xl font-bold bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
+                      Create Account
+                    </h1>
+                  </div>
+                  <motion.p 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    className="text-neutral-600 dark:text-neutral-300 text-lg"
+                  >
+                    Start your speed reading journey today!
+                  </motion.p>
+                </motion.div>
+
+                {/* Error Display */}
+                <AnimatePresence>
+                  {errors.submit && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-red-700 dark:text-red-400 text-sm"
+                    >
+                      {errors.submit}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Google Sign Up Button */}
+                <motion.button
+                  type="button"
+                  onClick={handleGoogleSignUp}
+                  disabled={loading}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                  whileHover={{ 
+                    scale: 1.02, 
+                    boxShadow: "0 10px 30px rgba(0, 0, 0, 0.1)",
+                    y: -2
+                  }}
+                  whileTap={{ scale: 0.98 }}
+                  className="mb-6 w-full bg-white/90 dark:bg-neutral-700/90 border-2 border-neutral-200 dark:border-neutral-600 hover:border-emerald-400 dark:hover:border-emerald-500 hover:bg-white dark:hover:bg-neutral-700 disabled:bg-neutral-100 dark:disabled:bg-neutral-800 text-neutral-900 dark:text-white font-medium py-4 px-6 rounded-xl transition-all duration-300 flex items-center justify-center space-x-3 shadow-lg backdrop-blur-sm relative overflow-hidden group"
+                >
+                  <motion.div
+                    animate={{ rotate: loading ? 360 : 0 }}
+                    transition={{ duration: 2, repeat: loading ? Infinity : 0 }}
+                  >
+                    <GoogleIcon />
+                  </motion.div>
+                  <span>Continue with Google</span>
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  />
+                </motion.button>
+
+                {/* Divider */}
+                <motion.div 
+                  initial={{ opacity: 0, scaleX: 0 }}
+                  animate={{ opacity: 1, scaleX: 1 }}
+                  transition={{ delay: 0.6 }}
+                  className="mb-6"
+                >
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-neutral-200 dark:border-neutral-700"></div>
+                    </div>
+                    <div className="relative flex justify-center text-sm">
+                      <span className="px-4 bg-white/70 dark:bg-neutral-800/70 backdrop-blur-sm text-neutral-500 dark:text-neutral-400 rounded-full">
+                        Or create with email
+                      </span>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Registration Form */}
+                <motion.form
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.7 }}
+                  onSubmit={handleSubmit}
+                  className="space-y-4"
+                >
+                  {/* Full Name Field */}
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.8 }}
+                  >
+                    <label className="block text-sm font-medium bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent mb-2">
+                      Full Name
+                    </label>
+                    <div className="relative group">
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 group-focus-within:text-emerald-500 transition-colors" size={18} />
+                      <input
+                        type="text"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        placeholder="Enter your full name"
+                        className={`w-full pl-10 pr-4 py-3 border-2 rounded-xl bg-white/80 dark:bg-neutral-700/80 backdrop-blur-sm text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-300 hover:shadow-lg ${
+                          errors.fullName ? 'border-red-500 focus:ring-red-500/50 focus:border-red-500' : 'border-neutral-300 dark:border-neutral-600'
+                        }`}
+                        disabled={loading}
+                      />
+                      <motion.div
+                        initial={false}
+                        animate={{ 
+                          scale: fullName ? 1 : 0,
+                          opacity: fullName ? 1 : 0 
+                        }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                      >
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      </motion.div>
+                    </div>
+                    <AnimatePresence>
+                      {errors.fullName && (
+                        <motion.p
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          className="mt-2 text-sm text-red-500"
+                        >
+                          {errors.fullName}
+                        </motion.p>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+
+                  {/* Email Field */}
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.9 }}
+                  >
+                    <label className="block text-sm font-medium bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                      Email Address
+                    </label>
+                    <div className="relative group">
+                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 group-focus-within:text-blue-500 transition-colors" size={18} />
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="your@email.com"
+                        className={`w-full pl-10 pr-4 py-3 border-2 rounded-xl bg-white/80 dark:bg-neutral-700/80 backdrop-blur-sm text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400 focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-300 hover:shadow-lg ${
+                          errors.email ? 'border-red-500 focus:ring-red-500/50 focus:border-red-500' : 'border-neutral-300 dark:border-neutral-600'
+                        }`}
+                        disabled={loading}
+                      />
+                      <motion.div
+                        initial={false}
+                        animate={{ 
+                          scale: email ? 1 : 0,
+                          opacity: email ? 1 : 0 
+                        }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                      >
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      </motion.div>
+                    </div>
+                    <AnimatePresence>
+                      {errors.email && (
+                        <motion.p
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          className="mt-2 text-sm text-red-500"
+                        >
+                          {errors.email}
+                        </motion.p>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+
+                  {/* Password Field */}
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 1.0 }}
+                  >
+                    <label className="block text-sm font-medium bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+                      Password
+                    </label>
+                    <div className="relative group">
+                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 group-focus-within:text-purple-500 transition-colors" size={18} />
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Create a password"
+                        className={`w-full pl-10 pr-12 py-3 border-2 rounded-xl bg-white/80 dark:bg-neutral-700/80 backdrop-blur-sm text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400 focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all duration-300 hover:shadow-lg ${
+                          errors.password ? 'border-red-500 focus:ring-red-500/50 focus:border-red-500' : 'border-neutral-300 dark:border-neutral-600'
+                        }`}
+                        disabled={loading}
+                      />
+                      <motion.button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-purple-500 transition-colors"
+                        disabled={loading}
+                      >
+                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </motion.button>
+                    </div>
+                    <AnimatePresence>
+                      {errors.password && (
+                        <motion.p
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          className="mt-2 text-sm text-red-500"
+                        >
+                          {errors.password}
+                        </motion.p>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+
+                  {/* Confirm Password Field */}
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 1.1 }}
+                  >
+                    <label className="block text-sm font-medium bg-gradient-to-r from-pink-600 to-orange-600 bg-clip-text text-transparent mb-2">
+                      Confirm Password
+                    </label>
+                    <div className="relative group">
+                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 group-focus-within:text-pink-500 transition-colors" size={18} />
+                      <input
+                        type={showConfirmPassword ? 'text' : 'password'}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="Confirm your password"
+                        className={`w-full pl-10 pr-12 py-3 border-2 rounded-xl bg-white/80 dark:bg-neutral-700/80 backdrop-blur-sm text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400 focus:ring-2 focus:ring-pink-500/50 focus:border-pink-500 transition-all duration-300 hover:shadow-lg ${
+                          errors.confirmPassword ? 'border-red-500 focus:ring-red-500/50 focus:border-red-500' : 'border-neutral-300 dark:border-neutral-600'
+                        }`}
+                        disabled={loading}
+                      />
+                      <motion.button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-pink-500 transition-colors"
+                        disabled={loading}
+                      >
+                        {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </motion.button>
+                    </div>
+                    <AnimatePresence>
+                      {errors.confirmPassword && (
+                        <motion.p
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          className="mt-2 text-sm text-red-500"
+                        >
+                          {errors.confirmPassword}
+                        </motion.p>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+
+                  {/* Create Account Button */}
+                  <motion.button
+                    type="submit"
+                    disabled={loading}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1.2 }}
+                    whileHover={{ scale: 1.02, boxShadow: "0 20px 40px rgba(16, 185, 129, 0.3)" }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 hover:from-emerald-700 hover:via-blue-700 hover:to-purple-700 disabled:from-neutral-400 disabled:via-neutral-500 disabled:to-neutral-600 text-white font-medium py-4 px-6 rounded-xl transition-all duration-300 flex items-center justify-center shadow-lg relative overflow-hidden group"
+                  >
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      initial={false}
+                      animate={{
+                        x: loading ? ['-100%', '100%'] : '0%'
+                      }}
+                      transition={{
+                        duration: loading ? 1.5 : 0,
+                        repeat: loading ? Infinity : 0,
+                        ease: "linear"
+                      }}
+                    />
+                    {loading ? (
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
+                      />
+                    ) : (
+                      <span className="flex items-center space-x-2">
+                        <span>Create Account</span>
+                        <motion.div
+                          animate={{ x: [0, 5, 0] }}
+                          transition={{ duration: 1.5, repeat: Infinity }}
+                        >
+                          →
+                        </motion.div>
+                      </span>
+                    )}
+                  </motion.button>
+                </motion.form>
+
+                {/* Sign In Link */}
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.3 }}
+                  className="mt-8 text-center"
+                >
+                  <p className="text-neutral-600 dark:text-neutral-400">
+                    Already have an account?{' '}
+                    <Link
+                      to="/login"
+                      className="font-medium text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 transition-colors"
+                    >
+                      Sign in
+                    </Link>
+                  </p>
+                </motion.div>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

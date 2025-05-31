@@ -30,6 +30,7 @@ import AuthProvider from './features/auth/providers/AuthProvider';
 
 // Shared Components
 import ErrorBoundary from './shared/components/ErrorBoundary';
+import Register from './features/auth/pages/Register';
 
 function App() {
   const { theme } = useThemeStore();
@@ -59,7 +60,7 @@ function App() {
               <Routes>
                 {/* Auth Routes */}
                 <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Login />} />
+                <Route path="/register" element={<Register />} />
                 <Route path="/auth/callback" element={
                   <div className="flex items-center justify-center min-h-screen">
                     <div className="text-center">
