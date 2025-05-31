@@ -6,6 +6,9 @@ interface GoalProgressProps {
 }
 
 const GoalProgress: React.FC<GoalProgressProps> = ({ stats }) => {
+  // Debug logging
+  console.log('🎯 GoalProgress: Received stats:', stats);
+  
   // Define some goals
   const goals = [
     { 

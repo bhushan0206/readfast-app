@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuthStore } from '../../../stores/authStore';
+import { useAuth } from '../../auth/providers/AuthProvider';
 import { getReadingSessions, getUserReadingStats } from '../../../services/supabase';
-import { BookOpen, TrendingUp, Clock, Award } from 'lucide-react';
+import { BookOpen, TrendingUp, Clock, Award, RefreshCw } from 'lucide-react';
 import Button from '../../../shared/components/Button';
 import RecentActivity from '../components/RecentActivity';
 import ReadingStats from '../components/ReadingStats';
@@ -14,20 +14,31 @@ const Dashboard: React.FC = () => {
   // Add debug logging
   console.log('🏠 Dashboard component rendered');
 
-  const { user, profile } = useAuthStore();
+  const { user } = useAuth();
   const [stats, setStats] = useState<any>(null);
   const [sessions, setSessions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // Debug auth state
+  console.log('🔍 Dashboard auth state:', { user: user?.id, email: user?.email });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (!user) return;
+        if (!user?.id) {
+          console.log('❌ Dashboard: No user ID available');
+          return;
+        }
+        
+        console.log('🔄 Dashboard: Fetching data for user:', user.id);
         
         const [statsData, sessionsData] = await Promise.all([
           getUserReadingStats(user.id),
           getReadingSessions(user.id)
         ]);
+        
+        console.log('✅ Dashboard: Stats data:', statsData);
+        console.log('✅ Dashboard: Sessions data:', sessionsData?.length || 0);
         
         setStats(statsData || {
           avg_wpm: 0,
@@ -38,14 +49,14 @@ const Dashboard: React.FC = () => {
         });
         setSessions(sessionsData || []);
       } catch (error) {
-        console.error('Error fetching dashboard data:', error);
+        console.error('❌ Dashboard: Error fetching dashboard data:', error);
       } finally {
         setLoading(false);
       }
     };
     
     fetchData();
-  }, [user]);
+  }, [user?.id]);
   
   if (loading) {
     return (
@@ -59,10 +70,38 @@ const Dashboard: React.FC = () => {
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
         <div>
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">Welcome, {profile?.full_name || 'Reader'}</h1>
+          <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">Welcome, {user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Reader'}</h1>
           <p className="text-neutral-600 dark:text-neutral-300 mt-1">Track your reading progress and improve your skills</p>
         </div>
-        <div className="mt-4 md:mt-0">
+        <div className="mt-4 md:mt-0 flex space-x-2">
+          {/* Debug refresh button */}
+          <Button
+            variant="outline"
+            leftIcon={<RefreshCw size={18} />}
+            onClick={async () => {
+              console.log('🔄 Manual dashboard refresh triggered');
+              setLoading(true);
+              try {
+                if (user?.id) {
+                  const [statsData, sessionsData] = await Promise.all([
+                    getUserReadingStats(user.id),
+                    getReadingSessions(user.id)
+                  ]);
+                  console.log('🔄 Refreshed stats:', statsData);
+                  console.log('🔄 Refreshed sessions:', sessionsData?.length || 0);
+                  setStats(statsData);
+                  setSessions(sessionsData || []);
+                }
+              } catch (error) {
+                console.error('❌ Refresh error:', error);
+              } finally {
+                setLoading(false);
+              }
+            }}
+          >
+            Refresh Data
+          </Button>
+          
           <Link to="/library">
             <Button leftIcon={<BookOpen size={18} />}>Start Reading</Button>
           </Link>
@@ -75,15 +114,15 @@ const Dashboard: React.FC = () => {
           <div className="flex justify-between items-start">
             <div>
               <p className="text-neutral-500 dark:text-neutral-400 text-sm">Current Reading Speed</p>
-              <h3 className="text-2xl font-bold mt-1 text-neutral-900 dark:text-white">{profile?.reading_speed || 0} WPM</h3>
+              <h3 className="text-2xl font-bold mt-1 text-neutral-900 dark:text-white">{stats?.avg_wpm || 0} WPM</h3>
             </div>
             <div className="bg-primary-100 dark:bg-primary-900/50 p-2 rounded-lg">
               <TrendingUp size={20} className="text-primary-600 dark:text-primary-400" />
             </div>
           </div>
           <div className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
-            {stats?.avg_wpm > 0 && stats?.avg_wpm !== profile?.reading_speed 
-              ? `Average: ${stats?.avg_wpm} WPM`
+            {stats?.max_wpm > 0 && stats?.max_wpm !== stats?.avg_wpm 
+              ? `Max: ${stats?.max_wpm} WPM`
               : 'Start reading to track your speed'
             }
           </div>
