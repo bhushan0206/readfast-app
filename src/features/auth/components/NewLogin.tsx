@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, Zap, BookOpen, Sparkles, Star, Brain, Target, TrendingUp, Lightbulb, Clock, Award } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Zap, BookOpen, Sparkles, Star, Brain, Target, TrendingUp, Lightbulb } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../../../stores/authStore';
 
@@ -48,7 +48,7 @@ const NewLogin: React.FC = () => {
     try {
       await signIn(email, password);
       navigate('/');
-    } catch (error) {
+    } catch {
       // Error is handled by the store
     }
   };
@@ -57,7 +57,7 @@ const NewLogin: React.FC = () => {
     try {
       await signInWithGoogle();
       // OAuth redirect will handle the rest
-    } catch (error) {
+    } catch {
       // Error is handled by the store
     }
   };
@@ -134,285 +134,77 @@ const NewLogin: React.FC = () => {
         <div className="container mx-auto px-4 py-8">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 min-h-screen items-center">
             
-            {/* Left Side - Feature Cards */}
-            <motion.div 
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              className="space-y-8 lg:pr-8"
-            >
-              {/* Main Header */}
-              <motion.div 
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="text-center lg:text-left"
-              >
-                <motion.div
-                  animate={{ rotate: [0, 5, -5, 0] }}
-                  transition={{ duration: 3, repeat: Infinity }}
-                  className="inline-flex items-center space-x-3 mb-6"
-                >
-                  <div className="p-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl shadow-lg">
-                    <Brain className="w-10 h-10 text-white" />
-                  </div>
-                  <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                    ReadFast AI
-                  </h1>
-                </motion.div>
-                <p className="text-xl text-neutral-600 dark:text-neutral-300 mb-8">
-                  Supercharge your reading with AI-powered speed reading technology
-                </p>
-              </motion.div>
-
-              {/* Feature Cards */}
-              <div className="grid gap-6">
-                {/* AI Speed Reading Card */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
-                  whileHover={{ scale: 1.02, y: -5 }}
-                  className="bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl rounded-2xl p-6 border border-white/20 dark:border-neutral-700/50 shadow-xl relative overflow-hidden group"
-                >
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  />
-                  <div className="relative flex items-start space-x-4">
-                    <motion.div
-                      animate={{ rotate: [0, 360] }}
-                      transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                      className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-lg"
-                    >
-                      <Zap className="w-6 h-6 text-white" />
-                    </motion.div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
-                        AI-Powered Speed Reading
-                      </h3>
-                      <p className="text-neutral-600 dark:text-neutral-300 text-sm">
-                        Advanced algorithms adapt to your reading patterns and optimize text presentation for maximum comprehension and speed.
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* Smart Analytics Card */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 }}
-                  whileHover={{ scale: 1.02, y: -5 }}
-                  className="bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl rounded-2xl p-6 border border-white/20 dark:border-neutral-700/50 shadow-xl relative overflow-hidden group"
-                >
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  />
-                  <div className="relative flex items-start space-x-4">
-                    <motion.div
-                      animate={{ scale: [1, 1.1, 1] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                      className="p-3 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl shadow-lg"
-                    >
-                      <TrendingUp className="w-6 h-6 text-white" />
-                    </motion.div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
-                        Smart Progress Analytics
-                      </h3>
-                      <p className="text-neutral-600 dark:text-neutral-300 text-sm">
-                        AI tracks your reading metrics, comprehension rates, and provides personalized insights to improve your skills.
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* Adaptive Learning Card */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.8 }}
-                  whileHover={{ scale: 1.02, y: -5 }}
-                  className="bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl rounded-2xl p-6 border border-white/20 dark:border-neutral-700/50 shadow-xl relative overflow-hidden group"
-                >
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  />
-                  <div className="relative flex items-start space-x-4">
-                    <motion.div
-                      animate={{ rotate: [0, 10, -10, 0] }}
-                      transition={{ duration: 4, repeat: Infinity }}
-                      className="p-3 bg-gradient-to-r from-orange-500 to-pink-600 rounded-xl shadow-lg"
-                    >
-                      <Target className="w-6 h-6 text-white" />
-                    </motion.div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
-                        Adaptive Learning System
-                      </h3>
-                      <p className="text-neutral-600 dark:text-neutral-300 text-sm">
-                        Machine learning adjusts difficulty levels and training exercises based on your performance and learning style.
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* Smart Recommendations */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.0 }}
-                  whileHover={{ scale: 1.02, y: -5 }}
-                  className="bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl rounded-2xl p-6 border border-white/20 dark:border-neutral-700/50 shadow-xl relative overflow-hidden group"
-                >
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  />
-                  <div className="relative flex items-start space-x-4">
-                    <motion.div
-                      animate={{ 
-                        rotateY: [0, 180, 360],
-                        scale: [1, 1.1, 1]
-                      }}
-                      transition={{ duration: 6, repeat: Infinity }}
-                      className="p-3 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl shadow-lg"
-                    >
-                      <Lightbulb className="w-6 h-6 text-white" />
-                    </motion.div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
-                        AI Reading Recommendations
-                      </h3>
-                      <p className="text-neutral-600 dark:text-neutral-300 text-sm">
-                        Get personalized content suggestions and reading strategies powered by AI to maximize your learning potential.
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-              </div>
-
-              {/* Stats Section */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.2 }}
-                className="grid grid-cols-3 gap-4 pt-6"
-              >
-                <motion.div 
-                  whileHover={{ scale: 1.05 }}
-                  className="text-center p-4 bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-xl border border-white/20 dark:border-neutral-700/30"
-                >
-                  <motion.div
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 2, repeat: Infinity, delay: 0.2 }}
-                    className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
-                  >
-                    3x
-                  </motion.div>
-                  <div className="text-xs text-neutral-600 dark:text-neutral-400">Faster Reading</div>
-                </motion.div>
-                
-                <motion.div 
-                  whileHover={{ scale: 1.05 }}
-                  className="text-center p-4 bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-xl border border-white/20 dark:border-neutral-700/30"
-                >
-                  <motion.div
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 2, repeat: Infinity, delay: 0.4 }}
-                    className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent"
-                  >
-                    95%
-                  </motion.div>
-                  <div className="text-xs text-neutral-600 dark:text-neutral-400">Comprehension</div>
-                </motion.div>
-                
-                <motion.div 
-                  whileHover={{ scale: 1.05 }}
-                  className="text-center p-4 bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-xl border border-white/20 dark:border-neutral-700/30"
-                >
-                  <motion.div
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 2, repeat: Infinity, delay: 0.6 }}
-                    className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-pink-600 bg-clip-text text-transparent"
-                  >
-                    50K+
-                  </motion.div>
-                  <div className="text-xs text-neutral-600 dark:text-neutral-400">Users</div>
-                </motion.div>
-              </motion.div>
-            </motion.div>
-
-            {/* Right Side - Auth Section */}
+            {/* Right Side - Auth Section (appears first on mobile) */}
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
-              className="w-full max-w-md mx-auto lg:mx-0 lg:ml-auto"
+              className="w-full max-w-sm mx-auto lg:mx-0 lg:ml-auto order-1 lg:order-2"
             >
-          {/* Main Login Card */}
-          <div className="bg-white/70 dark:bg-neutral-800/70 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/20 dark:border-neutral-700/50 relative overflow-hidden">
-            {/* Sparkle decoration */}
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-              className="absolute top-4 right-4"
-            >
-              <Sparkles className="w-6 h-6 text-yellow-400/60" />
-            </motion.div>
-
-            {/* Header */}
-            <motion.div 
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="text-center mb-8"
-            >
-              <div className="flex items-center justify-center space-x-3 mb-4">
+              {/* Main Login Card */}
+              <div className="bg-white/70 dark:bg-neutral-800/70 backdrop-blur-xl rounded-2xl shadow-2xl p-6 border border-white/20 dark:border-neutral-700/50 relative overflow-hidden">
+                {/* Sparkle decoration */}
                 <motion.div
-                  animate={{ rotate: [0, 5, -5, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="p-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-lg"
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                  className="absolute top-3 right-3"
                 >
-                  <Zap className="w-8 h-8 text-white" />
+                  <Sparkles className="w-5 h-5 text-yellow-400/60" />
                 </motion.div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                  ReadFast
-                </h1>
-              </div>
-              <motion.p 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-                className="text-neutral-600 dark:text-neutral-300 text-lg"
-              >
-                Welcome back! Ready to boost your reading speed?
-              </motion.p>
-            </motion.div>
 
-            <motion.form 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              onSubmit={handleSubmit} 
-              className="space-y-6"
-            >
+                {/* Header */}
+                <motion.div 
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-center mb-6"
+                >
+                  <div className="flex items-center justify-center space-x-2 mb-3">
+                    <motion.div
+                      animate={{ rotate: [0, 5, -5, 0] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-lg"
+                    >
+                      <Zap className="w-6 h-6 text-white" />
+                    </motion.div>
+                    <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                      ReadFast
+                    </h1>
+                  </div>
+                  <motion.p 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    className="text-neutral-600 dark:text-neutral-300 text-sm"
+                  >
+                    Welcome back! Ready to boost your reading speed?
+                  </motion.p>
+                </motion.div>
+
+                <motion.form 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                  onSubmit={handleSubmit} 
+                  className="space-y-4"
+                >
           {/* Email Field */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.6 }}
           >
-            <label className="block text-sm font-medium bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+            <label className="block text-xs font-medium bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-1">
               Email Address
             </label>
             <div className="relative group">
-              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 group-focus-within:text-blue-500 transition-colors" size={18} />
+              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 group-focus-within:text-blue-500 transition-colors" size={16} />
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="your@email.com"
-                className={`w-full pl-10 pr-4 py-3 border-2 rounded-xl bg-white/80 dark:bg-neutral-700/80 backdrop-blur-sm text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400 focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-300 hover:shadow-lg ${
+                className={`w-full pl-9 pr-4 py-2.5 border-2 rounded-lg bg-white/80 dark:bg-neutral-700/80 backdrop-blur-sm text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400 focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-300 hover:shadow-lg text-sm ${
                   errors.email ? 'border-red-500 focus:ring-red-500/50 focus:border-red-500' : 'border-neutral-300 dark:border-neutral-600'
                 }`}
                 disabled={loading}
@@ -426,7 +218,7 @@ const NewLogin: React.FC = () => {
                 transition={{ duration: 0.2 }}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2"
               >
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
               </motion.div>
             </div>
             <AnimatePresence>
@@ -435,7 +227,7 @@ const NewLogin: React.FC = () => {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="mt-2 text-sm text-red-500"
+                  className="mt-1 text-xs text-red-500"
                 >
                   {errors.email}
                 </motion.p>
@@ -449,17 +241,17 @@ const NewLogin: React.FC = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.7 }}
           >
-            <label className="block text-sm font-medium bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+            <label className="block text-xs font-medium bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-1">
               Password
             </label>
             <div className="relative group">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 group-focus-within:text-purple-500 transition-colors" size={18} />
+              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 group-focus-within:text-purple-500 transition-colors" size={16} />
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className={`w-full pl-10 pr-12 py-3 border-2 rounded-xl bg-white/80 dark:bg-neutral-700/80 backdrop-blur-sm text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400 focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all duration-300 hover:shadow-lg ${
+                className={`w-full pl-9 pr-10 py-2.5 border-2 rounded-lg bg-white/80 dark:bg-neutral-700/80 backdrop-blur-sm text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400 focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all duration-300 hover:shadow-lg text-sm ${
                   errors.password ? 'border-red-500 focus:ring-red-500/50 focus:border-red-500' : 'border-neutral-300 dark:border-neutral-600'
                 }`}
                 disabled={loading}
@@ -472,7 +264,7 @@ const NewLogin: React.FC = () => {
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-purple-500 transition-colors"
                 disabled={loading}
               >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </motion.button>
             </div>
             <AnimatePresence>
@@ -481,7 +273,7 @@ const NewLogin: React.FC = () => {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="mt-2 text-sm text-red-500"
+                  className="mt-1 text-xs text-red-500"
                 >
                   {errors.password}
                 </motion.p>
@@ -496,9 +288,9 @@ const NewLogin: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
-            whileHover={{ scale: 1.02, boxShadow: "0 20px 40px rgba(59, 130, 246, 0.3)" }}
+            whileHover={{ scale: 1.02, boxShadow: "0 15px 30px rgba(59, 130, 246, 0.3)" }}
             whileTap={{ scale: 0.98 }}
-            className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 disabled:from-neutral-400 disabled:via-neutral-500 disabled:to-neutral-600 text-white font-medium py-4 px-6 rounded-xl transition-all duration-300 flex items-center justify-center shadow-lg relative overflow-hidden group"
+            className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 disabled:from-neutral-400 disabled:via-neutral-500 disabled:to-neutral-600 text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center shadow-lg relative overflow-hidden group text-sm"
           >
             <motion.div
               className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
@@ -516,13 +308,13 @@ const NewLogin: React.FC = () => {
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
+                className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full"
               />
             ) : (
               <span className="flex items-center space-x-2">
                 <span>Sign In</span>
                 <motion.div
-                  animate={{ x: [0, 5, 0] }}
+                  animate={{ x: [0, 3, 0] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
                 >
                   →
@@ -537,14 +329,14 @@ const NewLogin: React.FC = () => {
           initial={{ opacity: 0, scaleX: 0 }}
           animate={{ opacity: 1, scaleX: 1 }}
           transition={{ delay: 0.9 }}
-          className="mt-8"
+          className="mt-5"
         >
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-600 to-transparent"></div>
             </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white/70 dark:bg-neutral-800/70 backdrop-blur-sm text-neutral-500 dark:text-neutral-400 rounded-full">
+            <div className="relative flex justify-center text-xs">
+              <span className="px-3 bg-white/70 dark:bg-neutral-800/70 backdrop-blur-sm text-neutral-500 dark:text-neutral-400 rounded-full">
                 Or continue with
               </span>
             </div>
@@ -561,11 +353,11 @@ const NewLogin: React.FC = () => {
           transition={{ delay: 1.0 }}
           whileHover={{ 
             scale: 1.02, 
-            boxShadow: "0 10px 30px rgba(0, 0, 0, 0.1)",
+            boxShadow: "0 8px 25px rgba(0, 0, 0, 0.1)",
             y: -2
           }}
           whileTap={{ scale: 0.98 }}
-          className="mt-6 w-full bg-white/90 dark:bg-neutral-700/90 border-2 border-neutral-200 dark:border-neutral-600 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-white dark:hover:bg-neutral-700 disabled:bg-neutral-100 dark:disabled:bg-neutral-800 text-neutral-900 dark:text-white font-medium py-4 px-6 rounded-xl transition-all duration-300 flex items-center justify-center space-x-3 shadow-lg backdrop-blur-sm relative overflow-hidden group"
+          className="mt-4 w-full bg-white/90 dark:bg-neutral-700/90 border-2 border-neutral-200 dark:border-neutral-600 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-white dark:hover:bg-neutral-700 disabled:bg-neutral-100 dark:disabled:bg-neutral-800 text-neutral-900 dark:text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center space-x-3 shadow-lg backdrop-blur-sm relative overflow-hidden group text-sm"
         >
           <motion.div
             animate={{ rotate: loading ? 360 : 0 }}
@@ -584,33 +376,33 @@ const NewLogin: React.FC = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.1 }}
-          className="mt-8 text-center"
+          className="mt-5 text-center"
         >
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-neutral-200 dark:border-neutral-700"></div>
             </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white/70 dark:bg-neutral-800/70 backdrop-blur-sm text-neutral-500 dark:text-neutral-400 rounded-full">
+            <div className="relative flex justify-center text-xs">
+              <span className="px-3 bg-white/70 dark:bg-neutral-800/70 backdrop-blur-sm text-neutral-500 dark:text-neutral-400 rounded-full">
                 New to ReadFast?
               </span>
             </div>
           </div>
           
           <motion.div 
-            className="mt-4"
+            className="mt-3"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
             <Link 
               to="/register" 
-              className="inline-flex items-center space-x-2 font-medium text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 px-6 py-3 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl relative overflow-hidden group"
+              className="inline-flex items-center space-x-2 font-medium text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 px-5 py-2.5 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl relative overflow-hidden group text-sm"
             >
               <motion.div
                 animate={{ rotate: [0, 10, -10, 0] }}
                 transition={{ duration: 2, repeat: Infinity }}
               >
-                <Sparkles size={18} className="text-emerald-200" />
+                <Sparkles size={16} className="text-emerald-200" />
               </motion.div>
               <span>Create your account</span>
               <motion.div
@@ -631,7 +423,7 @@ const NewLogin: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.3 }}
-            className="text-sm text-neutral-500 dark:text-neutral-400 mt-3"
+            className="text-xs text-neutral-500 dark:text-neutral-400 mt-2"
           >
             Join thousands of speed readers improving their skills
           </motion.p>
@@ -643,7 +435,7 @@ const NewLogin: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.4 }}
-            className="mt-6 space-y-2 border-t border-neutral-200/50 dark:border-neutral-600/50 pt-4"
+            className="mt-4 space-y-2 border-t border-neutral-200/50 dark:border-neutral-600/50 pt-3"
           >
             <motion.p 
               initial={{ scale: 0.9 }}
@@ -666,18 +458,18 @@ const NewLogin: React.FC = () => {
                     const { signUp } = useAuthStore.getState();
                     await signUp('test@demo.com', 'password123', 'Demo User');
                     console.log('✅ Demo account created');
-                  } catch (signUpError: any) {
+                  } catch {
                     console.log('Demo account may already exist, trying to sign in...');
                   }
                   
                   await signIn('test@demo.com', 'password123');
-                } catch (error: any) {
+                } catch (error: unknown) {
                   console.error('❌ Demo login error:', error);
                 }
               }}
               whileHover={{ scale: 1.02, y: -1 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-xs py-2.5 px-3 rounded-lg transition-all duration-200 font-medium shadow-sm"
+              className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-xs py-2 px-3 rounded-lg transition-all duration-200 font-medium shadow-sm"
             >
               🧪 Use Demo Account
             </motion.button>
@@ -704,13 +496,221 @@ const NewLogin: React.FC = () => {
               }}
               whileHover={{ scale: 1.02, y: -1 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-xs py-2.5 px-3 rounded-lg transition-all duration-200 font-medium shadow-sm"
+              className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-xs py-2 px-3 rounded-lg transition-all duration-200 font-medium shadow-sm"
             >
               🔍 Debug Auth State
             </motion.button>
           </motion.div>
         )}
         </div>
+            </motion.div>
+
+            {/* Left Side - Feature Cards (appears second on mobile) */}
+            <motion.div 
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              className="space-y-6 lg:pr-8 order-2 lg:order-1"
+            >
+              {/* Main Header */}
+              <motion.div 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="text-center lg:text-left"
+              >
+                <motion.div
+                  animate={{ rotate: [0, 5, -5, 0] }}
+                  transition={{ duration: 3, repeat: Infinity }}
+                  className="inline-flex items-center space-x-3 mb-4"
+                >
+                  <div className="p-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-lg">
+                    <Brain className="w-8 h-8 text-white" />
+                  </div>
+                  <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                    ReadFast AI
+                  </h1>
+                </motion.div>
+                <p className="text-lg text-neutral-600 dark:text-neutral-300 mb-6">
+                  Supercharge your reading with AI-powered speed reading technology
+                </p>
+              </motion.div>
+
+              {/* Feature Cards - 2x2 Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* AI Speed Reading Card */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  whileHover={{ scale: 1.02, y: -3 }}
+                  className="bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl rounded-xl p-4 border border-white/20 dark:border-neutral-700/50 shadow-xl relative overflow-hidden group"
+                >
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  />
+                  <div className="relative flex items-start space-x-3">
+                    <motion.div
+                      animate={{ rotate: [0, 360] }}
+                      transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                      className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg shadow-lg flex-shrink-0"
+                    >
+                      <Zap className="w-5 h-5 text-white" />
+                    </motion.div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base font-semibold text-neutral-900 dark:text-white mb-1">
+                        AI-Powered Speed Reading
+                      </h3>
+                      <p className="text-neutral-600 dark:text-neutral-300 text-sm leading-relaxed">
+                        Advanced algorithms adapt to your reading patterns for maximum speed.
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Smart Analytics Card */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                  whileHover={{ scale: 1.02, y: -3 }}
+                  className="bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl rounded-xl p-4 border border-white/20 dark:border-neutral-700/50 shadow-xl relative overflow-hidden group"
+                >
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  />
+                  <div className="relative flex items-start space-x-3">
+                    <motion.div
+                      animate={{ scale: [1, 1.1, 1] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="p-2 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-lg shadow-lg flex-shrink-0"
+                    >
+                      <TrendingUp className="w-5 h-5 text-white" />
+                    </motion.div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base font-semibold text-neutral-900 dark:text-white mb-1">
+                        Smart Progress Analytics
+                      </h3>
+                      <p className="text-neutral-600 dark:text-neutral-300 text-sm leading-relaxed">
+                        AI tracks your metrics and provides personalized insights.
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Adaptive Learning Card */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                  whileHover={{ scale: 1.02, y: -3 }}
+                  className="bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl rounded-xl p-4 border border-white/20 dark:border-neutral-700/50 shadow-xl relative overflow-hidden group"
+                >
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  />
+                  <div className="relative flex items-start space-x-3">
+                    <motion.div
+                      animate={{ rotate: [0, 10, -10, 0] }}
+                      transition={{ duration: 4, repeat: Infinity }}
+                      className="p-2 bg-gradient-to-r from-orange-500 to-pink-600 rounded-lg shadow-lg flex-shrink-0"
+                    >
+                      <Target className="w-5 h-5 text-white" />
+                    </motion.div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base font-semibold text-neutral-900 dark:text-white mb-1">
+                        Adaptive Learning System
+                      </h3>
+                      <p className="text-neutral-600 dark:text-neutral-300 text-sm leading-relaxed">
+                        Machine learning adjusts to your performance and style.
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Smart Recommendations */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.7 }}
+                  whileHover={{ scale: 1.02, y: -3 }}
+                  className="bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl rounded-xl p-4 border border-white/20 dark:border-neutral-700/50 shadow-xl relative overflow-hidden group"
+                >
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  />
+                  <div className="relative flex items-start space-x-3">
+                    <motion.div
+                      animate={{ 
+                        rotateY: [0, 180, 360],
+                        scale: [1, 1.1, 1]
+                      }}
+                      transition={{ duration: 6, repeat: Infinity }}
+                      className="p-2 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg shadow-lg flex-shrink-0"
+                    >
+                      <BookOpen className="w-5 h-5 text-white" />
+                    </motion.div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base font-semibold text-neutral-900 dark:text-white mb-1">
+                        AI Reading Recommendations
+                      </h3>
+                      <p className="text-neutral-600 dark:text-neutral-300 text-sm leading-relaxed">
+                        Get personalized content suggestions powered by AI.
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Stats Section */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8 }}
+                className="grid grid-cols-3 gap-3 pt-4"
+              >
+                <motion.div 
+                  whileHover={{ scale: 1.05 }}
+                  className="text-center p-3 bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-lg border border-white/20 dark:border-neutral-700/30"
+                >
+                  <motion.div
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 2, repeat: Infinity, delay: 0.2 }}
+                    className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+                  >
+                    3x
+                  </motion.div>
+                  <div className="text-xs text-neutral-600 dark:text-neutral-400">Faster Reading</div>
+                </motion.div>
+                
+                <motion.div 
+                  whileHover={{ scale: 1.05 }}
+                  className="text-center p-3 bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-lg border border-white/20 dark:border-neutral-700/30"
+                >
+                  <motion.div
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 2, repeat: Infinity, delay: 0.4 }}
+                    className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent"
+                  >
+                    95%
+                  </motion.div>
+                  <div className="text-xs text-neutral-600 dark:text-neutral-400">Comprehension</div>
+                </motion.div>
+                
+                <motion.div 
+                  whileHover={{ scale: 1.05 }}
+                  className="text-center p-3 bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-lg border border-white/20 dark:border-neutral-700/30"
+                >
+                  <motion.div
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 2, repeat: Infinity, delay: 0.6 }}
+                    className="text-xl font-bold bg-gradient-to-r from-orange-600 to-pink-600 bg-clip-text text-transparent"
+                  >
+                    50K+
+                  </motion.div>
+                  <div className="text-xs text-neutral-600 dark:text-neutral-400">Users</div>
+                </motion.div>
+              </motion.div>
             </motion.div>
           </div>
         </div>
