@@ -67,17 +67,17 @@ const NewRegister: React.FC = () => {
       await signUp(email, password, fullName);
       
       console.log('✅ Registration completed successfully');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('❌ Registration error:', error);
-      setErrors({ submit: error.message });
+      setErrors({ submit: error instanceof Error ? error.message : 'An unexpected error occurred' });
     }
   };
 
   const handleGoogleSignUp = async () => {
     try {
       await signInWithGoogle();
-    } catch (error: any) {
-      setErrors({ submit: error.message });
+    } catch (error: unknown) {
+      setErrors({ submit: error instanceof Error ? error.message : 'An unexpected error occurred' });
     }
   };
 
@@ -158,7 +158,7 @@ const NewRegister: React.FC = () => {
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
-              className="space-y-8 lg:pr-8"
+              className="space-y-6 lg:pr-8 order-2 lg:order-1"
             >
               {/* Main Header */}
               <motion.div 
@@ -170,47 +170,47 @@ const NewRegister: React.FC = () => {
                 <motion.div
                   animate={{ rotate: [0, 10, -10, 0] }}
                   transition={{ duration: 3, repeat: Infinity }}
-                  className="inline-flex items-center space-x-3 mb-6"
+                  className="inline-flex items-center space-x-2 mb-4"
                 >
-                  <div className="p-4 bg-gradient-to-r from-emerald-600 to-blue-600 rounded-3xl shadow-lg">
-                    <UserPlus className="w-10 h-10 text-white" />
+                  <div className="p-3 bg-gradient-to-r from-emerald-600 to-blue-600 rounded-2xl shadow-lg">
+                    <UserPlus className="w-8 h-8 text-white" />
                   </div>
-                  <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
                     Join ReadFast
                   </h1>
                 </motion.div>
-                <p className="text-xl text-neutral-600 dark:text-neutral-300 mb-8">
+                <p className="text-lg text-neutral-600 dark:text-neutral-300 mb-6">
                   Start your journey to faster reading with AI-powered technology
                 </p>
               </motion.div>
 
-              {/* Feature Cards */}
-              <div className="grid gap-6">
+              {/* Feature Cards - 2x2 Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Personalized Training Card */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
-                  whileHover={{ scale: 1.02, y: -5 }}
-                  className="bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl rounded-2xl p-6 border border-white/20 dark:border-neutral-700/50 shadow-xl relative overflow-hidden group"
+                  whileHover={{ scale: 1.02, y: -3 }}
+                  className="bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl rounded-xl p-4 border border-white/20 dark:border-neutral-700/50 shadow-xl relative overflow-hidden group"
                 >
                   <motion.div
                     className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                   />
-                  <div className="relative flex items-start space-x-4">
+                  <div className="relative flex items-start space-x-3">
                     <motion.div
                       animate={{ scale: [1, 1.1, 1] }}
                       transition={{ duration: 2, repeat: Infinity }}
-                      className="p-3 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl shadow-lg"
+                      className="p-2 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-lg shadow-lg flex-shrink-0"
                     >
-                      <Target className="w-6 h-6 text-white" />
+                      <Target className="w-5 h-5 text-white" />
                     </motion.div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base font-semibold text-neutral-900 dark:text-white mb-1">
                         Personalized Training Plans
                       </h3>
-                      <p className="text-neutral-600 dark:text-neutral-300 text-sm">
-                        AI creates custom reading exercises based on your skill level, learning pace, and personal goals.
+                      <p className="text-neutral-600 dark:text-neutral-300 text-sm leading-relaxed">
+                        AI creates custom reading exercises based on your skill level.
                       </p>
                     </div>
                   </div>
@@ -221,26 +221,26 @@ const NewRegister: React.FC = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6 }}
-                  whileHover={{ scale: 1.02, y: -5 }}
-                  className="bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl rounded-2xl p-6 border border-white/20 dark:border-neutral-700/50 shadow-xl relative overflow-hidden group"
+                  whileHover={{ scale: 1.02, y: -3 }}
+                  className="bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl rounded-xl p-4 border border-white/20 dark:border-neutral-700/50 shadow-xl relative overflow-hidden group"
                 >
                   <motion.div
                     className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                   />
-                  <div className="relative flex items-start space-x-4">
+                  <div className="relative flex items-start space-x-3">
                     <motion.div
                       animate={{ rotate: [0, 360] }}
                       transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-                      className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-lg"
+                      className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg shadow-lg flex-shrink-0"
                     >
-                      <TrendingUp className="w-6 h-6 text-white" />
+                      <TrendingUp className="w-5 h-5 text-white" />
                     </motion.div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base font-semibold text-neutral-900 dark:text-white mb-1">
                         Real-time Progress Tracking
                       </h3>
-                      <p className="text-neutral-600 dark:text-neutral-300 text-sm">
-                        Watch your reading speed improve with detailed analytics and milestone celebrations.
+                      <p className="text-neutral-600 dark:text-neutral-300 text-sm leading-relaxed">
+                        Watch your reading speed improve with detailed analytics.
                       </p>
                     </div>
                   </div>
@@ -251,29 +251,29 @@ const NewRegister: React.FC = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.8 }}
-                  whileHover={{ scale: 1.02, y: -5 }}
-                  className="bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl rounded-2xl p-6 border border-white/20 dark:border-neutral-700/50 shadow-xl relative overflow-hidden group"
+                  whileHover={{ scale: 1.02, y: -3 }}
+                  className="bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl rounded-xl p-4 border border-white/20 dark:border-neutral-700/50 shadow-xl relative overflow-hidden group"
                 >
                   <motion.div
                     className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                   />
-                  <div className="relative flex items-start space-x-4">
+                  <div className="relative flex items-start space-x-3">
                     <motion.div
                       animate={{ 
                         rotateY: [0, 180, 360],
                         scale: [1, 1.1, 1]
                       }}
                       transition={{ duration: 4, repeat: Infinity }}
-                      className="p-3 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl shadow-lg"
+                      className="p-2 bg-gradient-to-r from-purple-500 to-pink-600 rounded-lg shadow-lg flex-shrink-0"
                     >
-                      <Brain className="w-6 h-6 text-white" />
+                      <Brain className="w-5 h-5 text-white" />
                     </motion.div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base font-semibold text-neutral-900 dark:text-white mb-1">
                         Smart Content Curation
                       </h3>
-                      <p className="text-neutral-600 dark:text-neutral-300 text-sm">
-                        AI selects reading materials perfectly matched to your interests and skill development.
+                      <p className="text-neutral-600 dark:text-neutral-300 text-sm leading-relaxed">
+                        AI selects reading materials matched to your interests.
                       </p>
                     </div>
                   </div>
@@ -284,29 +284,29 @@ const NewRegister: React.FC = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1.0 }}
-                  whileHover={{ scale: 1.02, y: -5 }}
-                  className="bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl rounded-2xl p-6 border border-white/20 dark:border-neutral-700/50 shadow-xl relative overflow-hidden group"
+                  whileHover={{ scale: 1.02, y: -3 }}
+                  className="bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl rounded-xl p-4 border border-white/20 dark:border-neutral-700/50 shadow-xl relative overflow-hidden group"
                 >
                   <motion.div
                     className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-yellow-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                   />
-                  <div className="relative flex items-start space-x-4">
+                  <div className="relative flex items-start space-x-3">
                     <motion.div
                       animate={{ 
                         rotate: [0, 10, -10, 0],
                         scale: [1, 1.2, 1]
                       }}
                       transition={{ duration: 3, repeat: Infinity }}
-                      className="p-3 bg-gradient-to-r from-orange-500 to-yellow-600 rounded-xl shadow-lg"
+                      className="p-2 bg-gradient-to-r from-orange-500 to-yellow-600 rounded-lg shadow-lg flex-shrink-0"
                     >
-                      <Award className="w-6 h-6 text-white" />
+                      <Award className="w-5 h-5 text-white" />
                     </motion.div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base font-semibold text-neutral-900 dark:text-white mb-1">
                         Achievement & Rewards System
                       </h3>
-                      <p className="text-neutral-600 dark:text-neutral-300 text-sm">
-                        Earn badges, unlock new features, and compete with friends as you master speed reading.
+                      <p className="text-neutral-600 dark:text-neutral-300 text-sm leading-relaxed">
+                        Earn badges and unlock features as you master speed reading.
                       </p>
                     </div>
                   </div>
@@ -318,16 +318,16 @@ const NewRegister: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.2 }}
-                className="grid grid-cols-3 gap-4 pt-6"
+                className="grid grid-cols-3 gap-3 pt-4"
               >
                 <motion.div 
                   whileHover={{ scale: 1.05 }}
-                  className="text-center p-4 bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-xl border border-white/20 dark:border-neutral-700/30"
+                  className="text-center p-3 bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-lg border border-white/20 dark:border-neutral-700/30"
                 >
                   <motion.div
                     animate={{ scale: [1, 1.2, 1] }}
                     transition={{ duration: 2, repeat: Infinity, delay: 0.2 }}
-                    className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent"
+                    className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent"
                   >
                     Free
                   </motion.div>
@@ -336,12 +336,12 @@ const NewRegister: React.FC = () => {
                 
                 <motion.div 
                   whileHover={{ scale: 1.05 }}
-                  className="text-center p-4 bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-xl border border-white/20 dark:border-neutral-700/30"
+                  className="text-center p-3 bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-lg border border-white/20 dark:border-neutral-700/30"
                 >
                   <motion.div
                     animate={{ scale: [1, 1.2, 1] }}
                     transition={{ duration: 2, repeat: Infinity, delay: 0.4 }}
-                    className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+                    className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
                   >
                     24/7
                   </motion.div>
@@ -350,12 +350,12 @@ const NewRegister: React.FC = () => {
                 
                 <motion.div 
                   whileHover={{ scale: 1.05 }}
-                  className="text-center p-4 bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-xl border border-white/20 dark:border-neutral-700/30"
+                  className="text-center p-3 bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm rounded-lg border border-white/20 dark:border-neutral-700/30"
                 >
                   <motion.div
                     animate={{ scale: [1, 1.2, 1] }}
                     transition={{ duration: 2, repeat: Infinity, delay: 0.6 }}
-                    className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"
+                    className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"
                   >
                     30s
                   </motion.div>
@@ -369,17 +369,17 @@ const NewRegister: React.FC = () => {
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
-              className="w-full max-w-md mx-auto lg:mx-0 lg:ml-auto"
+              className="w-full max-w-sm mx-auto lg:mx-0 lg:ml-auto order-1 lg:order-2"
             >
               {/* Main Registration Card */}
-              <div className="bg-white/70 dark:bg-neutral-800/70 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/20 dark:border-neutral-700/50 relative overflow-hidden">
+              <div className="bg-white/70 dark:bg-neutral-800/70 backdrop-blur-xl rounded-2xl shadow-2xl p-6 border border-white/20 dark:border-neutral-700/50 relative overflow-hidden">
                 {/* Sparkle decoration */}
                 <motion.div
                   animate={{ rotate: 360 }}
                   transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                  className="absolute top-4 right-4"
+                  className="absolute top-3 right-3"
                 >
-                  <Sparkles className="w-6 h-6 text-emerald-400/60" />
+                  <Sparkles className="w-5 h-5 text-emerald-400/60" />
                 </motion.div>
 
                 {/* Header */}
@@ -387,17 +387,17 @@ const NewRegister: React.FC = () => {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
-                  className="text-center mb-8"
+                  className="text-center mb-6"
                 >
-                  <div className="flex items-center justify-center space-x-3 mb-4">
+                  <div className="flex items-center justify-center space-x-2 mb-3">
                     <motion.div
                       animate={{ rotate: [0, 10, -10, 0] }}
                       transition={{ duration: 3, repeat: Infinity }}
-                      className="p-3 bg-gradient-to-r from-emerald-600 to-blue-600 rounded-2xl shadow-lg"
+                      className="p-2 bg-gradient-to-r from-emerald-600 to-blue-600 rounded-xl shadow-lg"
                     >
-                      <UserPlus className="w-8 h-8 text-white" />
+                      <UserPlus className="w-6 h-6 text-white" />
                     </motion.div>
-                    <h1 className="text-3xl font-bold bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
                       Create Account
                     </h1>
                   </div>
@@ -405,7 +405,7 @@ const NewRegister: React.FC = () => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.4 }}
-                    className="text-neutral-600 dark:text-neutral-300 text-lg"
+                    className="text-neutral-600 dark:text-neutral-300 text-sm"
                   >
                     Start your speed reading journey today!
                   </motion.p>
@@ -418,7 +418,7 @@ const NewRegister: React.FC = () => {
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.95 }}
-                      className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-red-700 dark:text-red-400 text-sm"
+                      className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-400 text-sm"
                     >
                       {errors.submit}
                     </motion.div>
@@ -435,11 +435,11 @@ const NewRegister: React.FC = () => {
                   transition={{ delay: 0.5 }}
                   whileHover={{ 
                     scale: 1.02, 
-                    boxShadow: "0 10px 30px rgba(0, 0, 0, 0.1)",
+                    boxShadow: "0 8px 25px rgba(0, 0, 0, 0.1)",
                     y: -2
                   }}
                   whileTap={{ scale: 0.98 }}
-                  className="mb-6 w-full bg-white/90 dark:bg-neutral-700/90 border-2 border-neutral-200 dark:border-neutral-600 hover:border-emerald-400 dark:hover:border-emerald-500 hover:bg-white dark:hover:bg-neutral-700 disabled:bg-neutral-100 dark:disabled:bg-neutral-800 text-neutral-900 dark:text-white font-medium py-4 px-6 rounded-xl transition-all duration-300 flex items-center justify-center space-x-3 shadow-lg backdrop-blur-sm relative overflow-hidden group"
+                  className="mb-4 w-full bg-white/90 dark:bg-neutral-700/90 border-2 border-neutral-200 dark:border-neutral-600 hover:border-emerald-400 dark:hover:border-emerald-500 hover:bg-white dark:hover:bg-neutral-700 disabled:bg-neutral-100 dark:disabled:bg-neutral-800 text-neutral-900 dark:text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center space-x-3 shadow-lg backdrop-blur-sm relative overflow-hidden group text-sm"
                 >
                   <motion.div
                     animate={{ rotate: loading ? 360 : 0 }}
@@ -458,14 +458,14 @@ const NewRegister: React.FC = () => {
                   initial={{ opacity: 0, scaleX: 0 }}
                   animate={{ opacity: 1, scaleX: 1 }}
                   transition={{ delay: 0.6 }}
-                  className="mb-6"
+                  className="mb-4"
                 >
                   <div className="relative">
                     <div className="absolute inset-0 flex items-center">
                       <div className="w-full border-t border-neutral-200 dark:border-neutral-700"></div>
                     </div>
-                    <div className="relative flex justify-center text-sm">
-                      <span className="px-4 bg-white/70 dark:bg-neutral-800/70 backdrop-blur-sm text-neutral-500 dark:text-neutral-400 rounded-full">
+                    <div className="relative flex justify-center text-xs">
+                      <span className="px-3 bg-white/70 dark:bg-neutral-800/70 backdrop-blur-sm text-neutral-500 dark:text-neutral-400 rounded-full">
                         Or create with email
                       </span>
                     </div>
@@ -478,7 +478,7 @@ const NewRegister: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.7 }}
                   onSubmit={handleSubmit}
-                  className="space-y-4"
+                  className="space-y-3"
                 >
                   {/* Full Name Field */}
                   <motion.div
@@ -486,17 +486,17 @@ const NewRegister: React.FC = () => {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.8 }}
                   >
-                    <label className="block text-sm font-medium bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent mb-2">
+                    <label className="block text-xs font-medium bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent mb-1">
                       Full Name
                     </label>
                     <div className="relative group">
-                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 group-focus-within:text-emerald-500 transition-colors" size={18} />
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 group-focus-within:text-emerald-500 transition-colors" size={16} />
                       <input
                         type="text"
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
                         placeholder="Enter your full name"
-                        className={`w-full pl-10 pr-4 py-3 border-2 rounded-xl bg-white/80 dark:bg-neutral-700/80 backdrop-blur-sm text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-300 hover:shadow-lg ${
+                        className={`w-full pl-9 pr-4 py-2.5 border-2 rounded-lg bg-white/80 dark:bg-neutral-700/80 backdrop-blur-sm text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-300 hover:shadow-lg text-sm ${
                           errors.fullName ? 'border-red-500 focus:ring-red-500/50 focus:border-red-500' : 'border-neutral-300 dark:border-neutral-600'
                         }`}
                         disabled={loading}
@@ -510,7 +510,7 @@ const NewRegister: React.FC = () => {
                         transition={{ duration: 0.2 }}
                         className="absolute right-3 top-1/2 transform -translate-y-1/2"
                       >
-                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
                       </motion.div>
                     </div>
                     <AnimatePresence>
@@ -533,17 +533,17 @@ const NewRegister: React.FC = () => {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.9 }}
                   >
-                    <label className="block text-sm font-medium bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                    <label className="block text-xs font-medium bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-1">
                       Email Address
                     </label>
                     <div className="relative group">
-                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 group-focus-within:text-blue-500 transition-colors" size={18} />
+                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 group-focus-within:text-blue-500 transition-colors" size={16} />
                       <input
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="your@email.com"
-                        className={`w-full pl-10 pr-4 py-3 border-2 rounded-xl bg-white/80 dark:bg-neutral-700/80 backdrop-blur-sm text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400 focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-300 hover:shadow-lg ${
+                        className={`w-full pl-9 pr-4 py-2.5 border-2 rounded-lg bg-white/80 dark:bg-neutral-700/80 backdrop-blur-sm text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400 focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-300 hover:shadow-lg text-sm ${
                           errors.email ? 'border-red-500 focus:ring-red-500/50 focus:border-red-500' : 'border-neutral-300 dark:border-neutral-600'
                         }`}
                         disabled={loading}
@@ -557,7 +557,7 @@ const NewRegister: React.FC = () => {
                         transition={{ duration: 0.2 }}
                         className="absolute right-3 top-1/2 transform -translate-y-1/2"
                       >
-                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
                       </motion.div>
                     </div>
                     <AnimatePresence>
@@ -580,17 +580,17 @@ const NewRegister: React.FC = () => {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 1.0 }}
                   >
-                    <label className="block text-sm font-medium bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+                    <label className="block text-xs font-medium bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-1">
                       Password
                     </label>
                     <div className="relative group">
-                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 group-focus-within:text-purple-500 transition-colors" size={18} />
+                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 group-focus-within:text-purple-500 transition-colors" size={16} />
                       <input
                         type={showPassword ? 'text' : 'password'}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="Create a password"
-                        className={`w-full pl-10 pr-12 py-3 border-2 rounded-xl bg-white/80 dark:bg-neutral-700/80 backdrop-blur-sm text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400 focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all duration-300 hover:shadow-lg ${
+                        className={`w-full pl-9 pr-10 py-2.5 border-2 rounded-lg bg-white/80 dark:bg-neutral-700/80 backdrop-blur-sm text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400 focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all duration-300 hover:shadow-lg text-sm ${
                           errors.password ? 'border-red-500 focus:ring-red-500/50 focus:border-red-500' : 'border-neutral-300 dark:border-neutral-600'
                         }`}
                         disabled={loading}
@@ -603,7 +603,7 @@ const NewRegister: React.FC = () => {
                         className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-purple-500 transition-colors"
                         disabled={loading}
                       >
-                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                       </motion.button>
                     </div>
                     <AnimatePresence>
@@ -626,21 +626,33 @@ const NewRegister: React.FC = () => {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 1.1 }}
                   >
-                    <label className="block text-sm font-medium bg-gradient-to-r from-pink-600 to-orange-600 bg-clip-text text-transparent mb-2">
+                    <label className="block text-xs font-medium bg-gradient-to-r from-pink-600 to-orange-600 bg-clip-text text-transparent mb-1">
                       Confirm Password
                     </label>
                     <div className="relative group">
-                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 group-focus-within:text-pink-500 transition-colors" size={18} />
+                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 group-focus-within:text-pink-500 transition-colors" size={16} />
                       <input
                         type={showConfirmPassword ? 'text' : 'password'}
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         placeholder="Confirm your password"
-                        className={`w-full pl-10 pr-12 py-3 border-2 rounded-xl bg-white/80 dark:bg-neutral-700/80 backdrop-blur-sm text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400 focus:ring-2 focus:ring-pink-500/50 focus:border-pink-500 transition-all duration-300 hover:shadow-lg ${
+                        className={`w-full pl-9 pr-10 py-2.5 border-2 rounded-lg bg-white/80 dark:bg-neutral-700/80 backdrop-blur-sm text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400 focus:ring-2 focus:ring-pink-500/50 focus:border-pink-500 transition-all duration-300 hover:shadow-lg text-sm ${
                           errors.confirmPassword ? 'border-red-500 focus:ring-red-500/50 focus:border-red-500' : 'border-neutral-300 dark:border-neutral-600'
                         }`}
                         disabled={loading}
                       />
+                      <div className="absolute right-8 top-1/2 transform -translate-y-1/2">
+                        <motion.div
+                          initial={false}
+                          animate={{ 
+                            scale: confirmPassword && password && confirmPassword === password ? 1 : 0,
+                            opacity: confirmPassword && password && confirmPassword === password ? 1 : 0 
+                          }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                        </motion.div>
+                      </div>
                       <motion.button
                         type="button"
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
@@ -649,7 +661,7 @@ const NewRegister: React.FC = () => {
                         className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-pink-500 transition-colors"
                         disabled={loading}
                       >
-                        {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                       </motion.button>
                     </div>
                     <AnimatePresence>
@@ -673,9 +685,9 @@ const NewRegister: React.FC = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 1.2 }}
-                    whileHover={{ scale: 1.02, boxShadow: "0 20px 40px rgba(16, 185, 129, 0.3)" }}
+                    whileHover={{ scale: 1.02, boxShadow: "0 15px 30px rgba(16, 185, 129, 0.3)" }}
                     whileTap={{ scale: 0.98 }}
-                    className="w-full bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 hover:from-emerald-700 hover:via-blue-700 hover:to-purple-700 disabled:from-neutral-400 disabled:via-neutral-500 disabled:to-neutral-600 text-white font-medium py-4 px-6 rounded-xl transition-all duration-300 flex items-center justify-center shadow-lg relative overflow-hidden group"
+                    className="w-full bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 hover:from-emerald-700 hover:via-blue-700 hover:to-purple-700 disabled:from-neutral-400 disabled:via-neutral-500 disabled:to-neutral-600 text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center shadow-lg relative overflow-hidden group text-sm"
                   >
                     <motion.div
                       className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
@@ -708,6 +720,24 @@ const NewRegister: React.FC = () => {
                     )}
                   </motion.button>
                 </motion.form>
+
+                {/* Sign In Link */}
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.3 }}
+                  className="mt-4 text-center"
+                >
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                    Already have an account?{' '}
+                    <Link 
+                      to="/login" 
+                      className="font-medium text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 transition-colors"
+                    >
+                      Sign in
+                    </Link>
+                  </p>
+                </motion.div>
 
                 {/* Development Debug Info */}
                 {process.env.NODE_ENV === 'development' && (
